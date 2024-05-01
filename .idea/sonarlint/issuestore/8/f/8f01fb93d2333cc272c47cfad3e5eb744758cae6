@@ -1,0 +1,14 @@
+
+†	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚ÒéüÿÿÿÿJ$2cbfcda6-252f-43be-a16a-15cb0486b7c4
+†	java:S112d"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚ÒéüÿÿÿÿJ$af9c7b5d-c74a-417a-b657-15f657072aa4
+g	java:S112f"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8­•°­ó1
+£
+java:S1319#"hThe type of "requestBody" should be an interface such as "Map" rather than the implementation "HashMap".(âìÿ
+J$ae1b0f3f-6320-4913-af8c-e1e272aa5a07
+V
+java:S2864"4Iterate over the "entrySet" instead of the "keySet".(û‹êåüÿÿÿÿ8˜–°­ó1
+|	java:S125."<This block of commented-out lines of code should be removed.(¯êİ¥üÿÿÿÿJ$877fcb22-180a-41ae-b2a7-cbb4614b275a
+€
+java:S2147e"DCombine this catch with the one at line 99, which has the same body.(ï­£ÄJ$a7fc9fa5-8925-4d15-a58b-aace2839374e
+f	java:S106S"+Replace this use of System.out by a logger.(Ñ›òÔJ$30057451-c157-4233-b7ff-a579aa9ba047
+k	java:S106a"+Replace this use of System.out by a logger.(Í‘áªøÿÿÿÿJ$81972b8a-9538-45c8-872e-d50f69eec0c3

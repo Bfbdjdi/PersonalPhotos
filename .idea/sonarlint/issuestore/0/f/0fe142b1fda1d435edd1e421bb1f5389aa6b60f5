@@ -1,0 +1,6 @@
+
+	java:S1123"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8¤Ïº°ó1J$6e92ee20-3601-4905-a459-83f67efd5807
+¡
+java:S1450"YRemove the "authButton" field and declare it as a local variable in the relevant methods.(ô†–’üÿÿÿÿ8ÄÏº°ó1J$ab811d34-5a2c-4a32-a55e-505da78fbbd7
+¡
+java:S21422"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8ØÏº°ó1J$f63b907b-117c-445b-9321-abb08d4bd97c

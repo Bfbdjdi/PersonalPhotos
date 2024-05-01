@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+<!--    Создаём задник для полей ввода на экране входа: эллипс с шрагицами другого цвета-->
+
+<!--    Цветная граница какой-то толщины-->
+    <stroke
+        android:width="2dp"
+        android:color="@color/white"/>
+
+<!--    Закругления фигуры на какой-то радиус (в итоге круг)-->
+    <corners android:radius="360dp"/>
+
+    <solid android:color="#E2BFFF"/>
+
+
+</shape>
