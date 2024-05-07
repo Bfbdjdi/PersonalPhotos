@@ -1,5 +1,6 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (Objects.equals(blockedQueue.poll(), "allowed"))
             {
                 Toast.makeText(this, "Добро пожаловать, Геогрий Salty.", Toast.LENGTH_LONG).show();
+                Intent intentMainInterface = new Intent(this, BottomActivity.class);
+                startActivity(intentMainInterface);
             }
             else
             {

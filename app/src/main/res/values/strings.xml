@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PersonalPhotos</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="folders_fragment_title">Folders</string>
+    <string name="sync_fragment_title">Sync</string>
+    <string name="settings_fragment_title">Settings</string>
 </resources>

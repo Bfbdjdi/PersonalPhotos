@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id = "@+id/navigation_folders"
+        android:icon="@drawable/ic_action_folder"
+        android:title="@string/folders_fragment_title"
+        />
+
+    <item
+        android:id = "@+id/navigation_sync"
+        android:icon="@drawable/ic_action_sync"
+        android:title="@string/sync_fragment_title"
+        />
+
+    <item
+        android:id = "@+id/navigation_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/settings_fragment_title"
+        />
+</menu>
