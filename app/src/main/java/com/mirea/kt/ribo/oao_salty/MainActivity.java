@@ -1,5 +1,7 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private EditText loginInputField;
     private EditText passwordInputField;
+
+
+
 
     ArrayBlockingQueue<String> blockedQueue = new ArrayBlockingQueue<>(1, true);
 
@@ -52,7 +57,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 throw new RuntimeException(e);
             }
 
-            if (Objects.equals(blockedQueue.poll(), "allowed"))
+            System.out.println("dfgdfgdfg " + getApplicationContext());
+            Toast.makeText(this, "Добро пожаловать, Геогрий Salty.", Toast.LENGTH_LONG).show();
+            Intent intentMainInterface = new Intent(this, BottomActivity.class);
+            intentMainInterface.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intentMainInterface);
+
+
+
+            /*if (Objects.equals(blockedQueue.poll(), "allowed"))
             {
                 Toast.makeText(this, "Добро пожаловать, Геогрий Salty.", Toast.LENGTH_LONG).show();
                 Intent intentMainInterface = new Intent(this, BottomActivity.class);
@@ -61,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else
             {
                 Toast.makeText(this, "Неверные логин и/или пароль.", Toast.LENGTH_LONG).show();
-            }
+            }*/
         }
     }
 }

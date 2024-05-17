@@ -1,5 +1,6 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.HashSet;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +51,7 @@ public class SyncFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    SharedPreferences sharedPaths;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +59,8 @@ public class SyncFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
@@ -60,5 +68,7 @@ public class SyncFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sync, container, false);
+
     }
+
 }

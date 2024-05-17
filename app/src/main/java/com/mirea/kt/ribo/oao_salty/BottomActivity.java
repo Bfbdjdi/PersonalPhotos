@@ -1,18 +1,18 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+
 public class BottomActivity extends AppCompatActivity {
+
+    public BottomActivity() {
+    }
 
     private void replaceFragment(Fragment fragment)
     {
@@ -22,13 +22,23 @@ public class BottomActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom);
 
-        //getSupportActionBar().setTitle("test");
-        replaceFragment(new FoldersFragment());
+        replaceFragment(new SyncFragment());
+        SharedPreferences sharedPaths;
+
+        /*Gson gson = new Gson();
+        sharedPaths = getSharedPreferences("SharedData", MODE_PRIVATE);
+        SharedPreferences prefEditor = sharedPaths;
+        String asd = prefEditor.getString("listOfPaths", "null");
+        Type setType = new TypeToken<HashSet<String>>(){}.getType();
+        HashSet<String> djfh = gson.fromJson(asd, setType);
+        System.out.println("sfsgsgsd   " + djfh.toArray()[0]);*/
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item ->
@@ -45,7 +55,6 @@ public class BottomActivity extends AppCompatActivity {
                     replaceFragment(new SettingsFragment());
                     return true;
             }
-
             return false;
         });
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
