@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 
 import java.util.concurrent.BlockingQueue;
+
 
 public class ServerAuthProcess extends MainActivity implements Runnable {
     private String userLogin;
@@ -53,6 +55,20 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
         return sbParams.toString();
     }
 
+    // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
+    /*public boolean isOnline() {
+        try {
+            int timeoutMs = 1500;
+            Socket sock = new Socket();
+            SocketAddress sockaddr = new InetSocketAddress("8.8.8.8", 53);
+
+            sock.connect(sockaddr, timeoutMs);
+            sock.close();
+
+            return true;
+        } catch (IOException e) { return false; }
+    }*/
+
     @Override
     public void run() {
 
@@ -64,8 +80,6 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
         userCredentialsMap.put("g", "RIBO-01-22");
 
         String responseBody = "";
-
-        System.out.println("gjsogdfjgnof fg   " + contexter);
 
         try {
             URL url = new URL(serverAddress);
@@ -105,18 +119,17 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
                         break;
                 }
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | JSONException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+            System.out.println("No internet connectivity. Unable to auth the user.");
+            blockedQueue.add("not connected to auth-server");
         }
     }
 
     private SharedPreferences userCredentials;
-    private void autoSaveLoginUsingSharedPrefs(String userLogin, String userPassword, Context context)
-    {
+
+    private void autoSaveLoginUsingSharedPrefs(String userLogin, String userPassword, Context context) {
         userCredentials = contexter.getSharedPreferences("UserData", MODE_PRIVATE);
         SharedPreferences prefReader = userCredentials;
         Gson gson = new Gson();

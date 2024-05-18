@@ -36,8 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String userLogin = prefReader.getString("userLogin", "null");
         String userPassword = prefReader.getString("userPassword", "null");
 
-        if ((!userLogin.equals("null")) && (!userPassword.equals("null")))
-        {
+        if ((!userLogin.equals("null")) && (!userPassword.equals("null"))) {
             loginInputField.setText(userLogin.replace("\"", ""));
             passwordInputField.setText(userPassword.replace("\"", ""));
         }
@@ -46,8 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-        if (v.getId() == R.id.loginButton)
-        {
+        if (v.getId() == R.id.loginButton) {
             String strLoginInputField = loginInputField.getText().toString();
             String strPasswordInputField = passwordInputField.getText().toString();
 
@@ -61,16 +59,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 throw new RuntimeException(e);
             }
 
-            if (Objects.equals(blockedQueue.poll(), "allowed"))
-            {
-                Toast.makeText(this, "Добро пожаловать.", Toast.LENGTH_LONG).show();
-                Intent intentMainInterface = new Intent(this, BottomActivity.class);
-                intentMainInterface.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intentMainInterface);
-            }
-            else
-            {
-                Toast.makeText(this, "Неверные логин и/или пароль.", Toast.LENGTH_LONG).show();
+            String networkPermission = blockedQueue.poll();
+
+            if (networkPermission != null) {
+                String answ = Objects.requireNonNull(networkPermission);
+                switch (answ) {
+                    case "allowed":
+                        Toast.makeText(this, "Добро пожаловать.", Toast.LENGTH_LONG).show();
+                        Intent intentMainInterface = new Intent(this, BottomActivity.class);
+                        intentMainInterface.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intentMainInterface);
+                        break;
+                    case "not allowed":
+                        Toast.makeText(this, "Неверные логин и/или пароль.", Toast.LENGTH_LONG).show();
+                        break;
+                    case "not connected to auth-server":
+                        Toast.makeText(this, "Нет связи с сервером авторизации.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Проверьте сетевые настройки устройства.", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         }
     }
