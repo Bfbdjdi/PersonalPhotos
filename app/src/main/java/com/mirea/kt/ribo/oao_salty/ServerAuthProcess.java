@@ -1,6 +1,11 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -8,20 +13,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
+
 import java.util.concurrent.BlockingQueue;
 
 public class ServerAuthProcess extends MainActivity implements Runnable {
     private String userLogin;
     private String userPassword;
     private BlockingQueue<String> blockedQueue;
+    private Context contexter;
 
-    public ServerAuthProcess(String userLogin, String userPassword, BlockingQueue<String> blockedQueue) {
+    public ServerAuthProcess(String userLogin, String userPassword, BlockingQueue<String> blockedQueue, Context contexter) {
+        this.contexter = contexter;
         this.userLogin = userLogin;
         this.userPassword = userPassword;
         this.blockedQueue = blockedQueue;
@@ -56,6 +65,8 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
 
         String responseBody = "";
 
+        System.out.println("gjsogdfjgnof fg   " + contexter);
+
         try {
             URL url = new URL(serverAddress);
             URLConnection connection = url.openConnection();
@@ -84,6 +95,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
                 switch (result) {
                     case 1:
                         blockedQueue.add("allowed");
+                        autoSaveLoginUsingSharedPrefs(userLogin, userPassword, contexter);
                         break;
                     case -1:
                         blockedQueue.add("not allowed");
@@ -100,6 +112,17 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private SharedPreferences userCredentials;
+    private void autoSaveLoginUsingSharedPrefs(String userLogin, String userPassword, Context context)
+    {
+        userCredentials = contexter.getSharedPreferences("UserData", MODE_PRIVATE);
+        SharedPreferences prefReader = userCredentials;
+        Gson gson = new Gson();
+
+        prefReader.edit().putString("userLogin", gson.toJson(userLogin)).apply();
+        prefReader.edit().putString("userPassword", gson.toJson(userPassword)).apply();
     }
 }
 

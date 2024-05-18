@@ -90,8 +90,8 @@ public class WEBDAVSync extends ContextWrapper {
 
             //Retrieving Uri's from SharedPrefs
             sharedPaths = getSharedPreferences("SharedData", MODE_PRIVATE);
-            SharedPreferences prefEditor = sharedPaths;
-            String encodedStringedPaths = prefEditor.getString("listOfPaths", "null");
+            SharedPreferences prefReader = sharedPaths;
+            String encodedStringedPaths = prefReader.getString("listOfPaths", "null");
 
             //Setting up GSON
             Gson gson = new Gson();

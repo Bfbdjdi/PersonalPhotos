@@ -35,6 +35,7 @@ public class FolderPicker extends AppCompatActivity {
 
         if (data != null)
         {
+
             final Runnable thread = ()->{
 
                 Uri uri = data.getData();
