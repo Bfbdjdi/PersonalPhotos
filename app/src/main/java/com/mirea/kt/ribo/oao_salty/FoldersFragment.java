@@ -31,7 +31,8 @@ public class FoldersFragment extends Fragment {
         String driveURL = "https://webdav.yandex.ru";
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(login, password, driveURL, requireContext());
-
+        //WEBDAVUtil.foldersPathsObtainer();
+        WEBDAVUtil.fileUploader();
         return rootView;
     }
 }

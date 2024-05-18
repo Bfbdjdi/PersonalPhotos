@@ -24,6 +24,8 @@ public class FolderPicker extends AppCompatActivity {
         sharedPaths = getSharedPreferences("SharedData", MODE_PRIVATE);
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+
         startActivityForResult(intent, 42);
     }
 
@@ -36,6 +38,7 @@ public class FolderPicker extends AppCompatActivity {
             final Runnable thread = ()->{
 
                 Uri uri = data.getData();
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 SharedPreferences prefEditor = sharedPaths;
 

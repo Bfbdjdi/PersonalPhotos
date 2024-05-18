@@ -48,8 +48,8 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.transport.runtime
     //implementation libs.pig
-    //testImplementation libs.junit
-    //androidTestImplementation libs.ext.junit
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
     implementation 'commons-io:commons-io:2.12.0'
