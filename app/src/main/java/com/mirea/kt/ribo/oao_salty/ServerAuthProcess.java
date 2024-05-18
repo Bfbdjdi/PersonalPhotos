@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -74,7 +75,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
 
         String serverAddress = "https://android-for-students.ru/coursework/login.php";
 
-        HashMap<String, String> userCredentialsMap = new HashMap();
+        HashMap<String, String> userCredentialsMap = new HashMap<>();
         userCredentialsMap.put("lgn", userLogin);
         userCredentialsMap.put("pwd", userPassword);
         userCredentialsMap.put("g", "RIBO-01-22");
@@ -124,6 +125,9 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
         } catch (IOException e) {
             System.out.println("No internet connectivity. Unable to auth the user.");
             blockedQueue.add("not connected to auth-server");
+        } catch (IllegalStateException e){
+            System.out.println("Was connected to the auth-server, but then was suddenly disconnected.");
+            blockedQueue.add("was connected, but then was suddenly disconnected");
         }
     }
 

@@ -1,10 +1,13 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedFilesRelatedQueue;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
@@ -35,7 +38,6 @@ public class FolderPicker extends AppCompatActivity {
 
         if (data != null)
         {
-
             final Runnable thread = ()->{
 
                 Uri uri = data.getData();
@@ -70,6 +72,9 @@ public class FolderPicker extends AppCompatActivity {
                 }
             };
             new Thread(thread).start();
+        }
+        else {
+            blockedFilesRelatedQueue.add("no directories were chosen in the device's memory by the user");
         }
 
         Intent returnToHomeMenu = new Intent(getApplicationContext(), FolderPicker.class);

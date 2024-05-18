@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(this, "Нет связи с сервером авторизации.", Toast.LENGTH_SHORT).show();
                         Toast.makeText(this, "Проверьте сетевые настройки устройства.", Toast.LENGTH_SHORT).show();
                         break;
+                    case "was connected, but then was suddenly disconnected":
+                        Toast.makeText(this, "Сервер разорвал соединение.", Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
         }
