@@ -78,7 +78,7 @@ public class FolderPicker extends AppCompatActivity {
         }
 
         Intent returnToHomeMenu = new Intent(getApplicationContext(), FolderPicker.class);
-        returnToHomeMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        returnToHomeMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(returnToHomeMenu);
     }
 }

@@ -22,10 +22,6 @@ public class FoldersFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_folders, container, false);
 
-        /*String login = "goognis235@gmail.com";
-        String password = "qazwsxedc102";
-        String driveURL = "https://d.docs.live.net/2813629C839F23D7";*/
-
         String login = "goshabelin@yandex.ru";
         String password = "sttumbcxmhmdipvq";
         String driveURL = "https://webdav.yandex.ru";
