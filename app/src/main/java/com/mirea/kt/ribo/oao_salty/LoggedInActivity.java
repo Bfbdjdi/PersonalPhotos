@@ -19,7 +19,7 @@ public class LoggedInActivity extends AppCompatActivity {
 
         Fragment foldersFragment = new FoldersFragment();
         Fragment syncFragment = new SyncFragment();
-        Fragment settingsFragment = new SettingsFragment();
+
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

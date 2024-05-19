@@ -1,13 +1,16 @@
 package com.mirea.kt.ribo.oao_salty;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -33,9 +36,10 @@ public class BottomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_bottom);
 
-        replaceFragment(new SyncFragment());
+        replaceFragment(new FoldersFragment());
 
         String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();
         String errorFileMessage = blockedFilesRelatedQueue.poll();
@@ -69,6 +73,17 @@ public class BottomActivity extends AppCompatActivity {
             }
         }
 
+        FloatingActionButton settingsButton = findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(item ->
+        {
+            Intent intentMainInterface = new Intent(this, SettingsActivity.class);
+            startActivity(intentMainInterface);
+        });
+
+
+        //Toolbar toolbar = findViewById(R.id.mainToolbar);
+        //setSupportActionBar(toolbar);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item ->
         {
@@ -80,15 +95,14 @@ public class BottomActivity extends AppCompatActivity {
                 case R.id.navigation_sync:
                     replaceFragment(new SyncFragment());
                     return true;
-                case R.id.navigation_settings:
-                    replaceFragment(new SettingsFragment());
-                    return true;
             }
             return false;
         });
+
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
             return insets;
         });*/
     }

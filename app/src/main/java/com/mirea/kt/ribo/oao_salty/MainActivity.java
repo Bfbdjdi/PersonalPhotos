@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button authButton;
     private EditText loginInputField;
     private EditText passwordInputField;
+    private Toolbar toolBar;
 
     ArrayBlockingQueue<String> blockedQueue = new ArrayBlockingQueue<>(1, true);
 
@@ -29,6 +31,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         authButton = findViewById(R.id.loginButton);
         loginInputField = findViewById(R.id.loginInput);
         passwordInputField = findViewById(R.id.passwordInput);
+
+        toolBar = findViewById(R.id.loginToolbar);
+        setSupportActionBar(toolBar);
+
         authButton.setOnClickListener(this);
 
         //Retrieving some user's data from SharedPrefs
@@ -53,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             Thread userAuthThread = new Thread(credentialsToCheck);
             userAuthThread.start();
+
+            if (this.getSupportActionBar() != null) { getSupportActionBar().setTitle("Подключение..."); }
             try {
                 userAuthThread.join();
             } catch (InterruptedException e) {
@@ -65,19 +73,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String answ = Objects.requireNonNull(networkPermission);
                 switch (answ) {
                     case "allowed":
-                        Toast.makeText(this, "Добро пожаловать.", Toast.LENGTH_LONG).show();
                         Intent intentMainInterface = new Intent(this, BottomActivity.class);
                         intentMainInterface.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intentMainInterface);
                         break;
                     case "not allowed":
+                        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("PersonalPhotos"); }
                         Toast.makeText(this, "Неверные логин и/или пароль.", Toast.LENGTH_LONG).show();
                         break;
                     case "not connected to auth-server":
+                        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("PersonalPhotos"); }
                         Toast.makeText(this, "Нет связи с сервером авторизации.", Toast.LENGTH_SHORT).show();
                         Toast.makeText(this, "Проверьте сетевые настройки устройства.", Toast.LENGTH_SHORT).show();
                         break;
                     case "was connected, but then was suddenly disconnected":
+                        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("PersonalPhotos"); }
                         Toast.makeText(this, "Сервер разорвал соединение.", Toast.LENGTH_SHORT).show();
                         break;
                 }

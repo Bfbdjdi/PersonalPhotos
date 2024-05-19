@@ -32,7 +32,7 @@ public class FoldersFragment extends Fragment {
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(login, password, driveURL, requireContext());
         //WEBDAVUtil.foldersPathsObtainer();
-        WEBDAVUtil.fileUploader();
+        //WEBDAVUtil.fileUploader();
         return rootView;
     }
 }

@@ -7,46 +7,33 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="140dp"
-        android:layout_height="55dp"
-
-        android:text="Войти"
-        android:textSize="20sp"
-
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/loginToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:title="PersonalPhotos"
+        app:titleTextColor="@android:color/white" />
 
-    <EditText
-        android:id="@+id/passwordInput"
-
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-
-        android:layout_marginStart="20dp"
-
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="16dp"
-
-        android:background="@drawable/circular_edit_text"
-
-        android:ems="10"
-
-        android:hint="Пароль"
-
-        android:inputType="textPassword"
-
-        android:textAlignment="center"
-        android:textColor="@color/black"
-
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        app:layout_constraintBottom_toTopOf="@+id/loginInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+
+
+        app:layout_constraintTop_toBottomOf="@+id/loginToolbar"
+        app:srcCompat="@drawable/icloud" />
 
     <EditText
         android:id="@+id/loginInput"
@@ -57,13 +44,16 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
 
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="4dp"
 
         android:background="@drawable/circular_edit_text"
 
         android:ems="10"
         android:hint="Логин"
         android:inputType="text"
+        android:maxLength="15"
+
+        android:maxLines="1"
         android:textAlignment="center"
 
         android:textColor="@color/black"
@@ -71,19 +61,54 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/passwordInput"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/loginInput"
+    <EditText
+        android:id="@+id/passwordInput"
+
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+
+        android:layout_marginStart="20dp"
+
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="28dp"
+
+        android:background="@drawable/circular_edit_text"
+
+        android:ems="10"
+
+        android:hint="Пароль"
+        android:inputType="textPassword"
+
+        android:maxLength="20"
+
+        android:maxLines="1"
+
+        android:textAlignment="center"
+        android:textColor="@color/black"
+
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="140dp"
+        android:layout_height="55dp"
+
+        android:text="Войти"
+        android:textSize="20sp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/icloud" />
+        app:layout_constraintVertical_bias="0.606" />
 
     <TextView
         android:id="@+id/textView4"

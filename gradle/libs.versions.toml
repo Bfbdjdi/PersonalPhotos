@@ -14,6 +14,7 @@ sardineAndroid = "<0.9>"
 webdav = "0.0.2"
 transportRuntime = "3.3.0"
 pig = "0.17.0"
+preference = "1.2.1"
 
 [libraries]
 dav4jvm = { module = "com.github.bitfireAT:dav4jvm", version.ref = "dav4jvm" }
@@ -30,6 +31,7 @@ sardine-android = { module = "com.github.thegrizzlylabs:sardine-android", versio
 webdav = { module = "org.xdty.webdav:webdav", version.ref = "webdav" }
 transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
 pig = { group = "org.apache.pig", name = "pig", version.ref = "pig" }
+preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
