@@ -8,15 +8,20 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settingsToolbar"
         app:navigationIcon="?attr/homeAsUpIndicator"
+
         android:theme="@style/ToolbarColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
+
+        android:background="?attr/colorPrimary"
+
+        android:fitsSystemWindows="true"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+
         app:title="Настройки"
         app:titleTextColor="@android:color/white" />
 
@@ -24,5 +29,9 @@
         android:id="@+id/settings"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <ListView android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

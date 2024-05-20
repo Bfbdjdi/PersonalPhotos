@@ -8,14 +8,19 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+
 import androidx.documentfile.provider.DocumentFile;
+import androidx.preference.PreferenceManager;
+
 import com.anggrayudi.storage.file.DocumentFileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thegrizzlylabs.sardineandroid.DavResource;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine;
+
 import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -24,24 +29,27 @@ import java.util.HashSet;
 import java.util.List;
 
 import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 
 public class WEBDAVSync extends ContextWrapper {
 
-    private String login;
-    private String password;
-    private String driveURL;
+    private String login = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("userWEBDAVLogin", "login not avail");
+    private String password = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("userWEBDAVPassword", "password not avail");
 
-    public WEBDAVSync(String login, String password, String driveURL, Context contexter) {
+    private String driveURL = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("driveURL", "driveURL not avail");
+
+    private String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
+
+
+
+    public WEBDAVSync(Context contexter) {
         super(contexter);
-        this.login = login;
-        this.password = password;
-        this.driveURL = driveURL;
     }
 
-    public void syncListWebdav()
-    {
-        final Runnable thread = ()->{
+    public void syncListWebdav() {
+
+        final Runnable thread = () -> {
             Sardine sardine = new OkHttpSardine();
             sardine.setCredentials(this.login, this.password);
             List<DavResource> resources;
@@ -52,27 +60,26 @@ public class WEBDAVSync extends ContextWrapper {
                 throw new RuntimeException(e);
             }
 
-            for (DavResource res : resources)
-            {
+            for (DavResource res : resources) {
                 System.out.println(res); // calls the .toString() method.
             }
         };
         new Thread(thread).start();
     }
 
-    public void foldersPathsObtainer()
-    {
+    public void foldersPathsObtainer() {
         Intent folderPickerStart = new Intent(getApplicationContext(), FolderPicker.class);
         folderPickerStart.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(folderPickerStart);
     }
 
     SharedPreferences sharedPaths;
-    public void fileUploader()
-    {
-        final Runnable thread = ()->{
+
+    public void fileUploader() {
+        final Runnable thread = () -> {
 
             try {
+
                 //Setting up basic connectivity
                 OkHttpClient okHttpClient = new OkHttpClient.Builder()
                         .connectTimeout(5, TimeUnit.MINUTES)
@@ -84,8 +91,8 @@ public class WEBDAVSync extends ContextWrapper {
 
                 //checking whether specific folder exists
                 try {
-                    if (!sardine.exists(driveURL + "/PersonalPhotos")) {
-                        sardine.createDirectory(driveURL + "/PersonalPhotos");
+                    if (!sardine.exists(this.driveURL + "/" + this.folderNameUploadIn)) {
+                        sardine.createDirectory(this.driveURL + "/" + this.folderNameUploadIn);
                     }
                 } catch (IOException e) {
                     blockedNetworkRelatedQueue.add("failed creating PersonalPhotos folder in the WEBDAV");
@@ -108,7 +115,7 @@ public class WEBDAVSync extends ContextWrapper {
                 //Listing every file name that exists in the cloud folder
                 List<DavResource> alreadyUploadedFilesDAV = null;
                 try {
-                    alreadyUploadedFilesDAV = sardine.list(driveURL + "/PersonalPhotos");
+                    alreadyUploadedFilesDAV = sardine.list(this.driveURL + "/" + this.folderNameUploadIn);
                 } catch (IOException e) {
                     System.out.println("failed listing files in the WEBDAV");
                     blockedNetworkRelatedQueue.add("failed listing files in the WEBDAV");
@@ -134,9 +141,9 @@ public class WEBDAVSync extends ContextWrapper {
                         for (DocumentFile file : directoryTreeOfFiles.listFiles()) {
                             System.out.println(file.getName());
                             try {
-                                if (!sardine.exists(driveURL + "/PersonalPhotos/" + file.getName())) {
+                                if (!sardine.exists(this.driveURL + "/" + this.folderNameUploadIn + "/" + file.getName())) {
                                     InputStream fis = DocumentFileUtils.openInputStream(file, this);
-                                    sardine.put(driveURL + "/PersonalPhotos/" + file.getName(), IOUtils.toByteArray(fis));
+                                    sardine.put(this.driveURL + "/" + this.folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
                                     System.out.println(file.getName() + " - has been uploaded.");
                                 } else {
                                     System.out.println(file.getName() + " - skipping duplicate");
@@ -148,9 +155,7 @@ public class WEBDAVSync extends ContextWrapper {
                         }
                     }
                 }
-            }
-            catch (IllegalStateException e)
-            {
+            } catch (IllegalStateException e) {
                 System.out.println("Was connected to the auth-server, but then was suddenly disconnected.");
                 blockedNetworkRelatedQueue.add("was connected, but then was suddenly disconnected");
             }

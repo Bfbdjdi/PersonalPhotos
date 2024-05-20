@@ -1,32 +1,47 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="Настройки подключения по WEBDAV">
         <EditTextPreference
+            app:key="driveURL"
+            app:title="Адрес сервера"
+            app:useSimpleSummaryProvider="false"
+            app:summary="Например, \n'https://webdav.yandex.ru/'" />
 
-            app:key="signature"
-            app:title="@string/signature_title"
+        <EditTextPreference
+            app:key="folderNameUploadIn"
+            app:defaultValue="PersonalPhotos"
+            app:singleLineTitle="false"
+            app:dialogTitle="Название папки на сервере"
+            app:title="Название папки на сервере, которая будет использоваться для сохранения загружаемых файлов"
             app:useSimpleSummaryProvider="true" />
 
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dialogTitle="Логин учётной записи"
+            app:key="userWEBDAVLogin"
+            app:title="Логин учётной записи"
+            app:summary="Например, Ваша почта или адрес сети сервера" />
 
-    <PreferenceCategory app:title="@string/sync_header">
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+        <EditTextPreference
+            app:key="userWEBDAVPassword"
+            app:singleLineTitle="false"
+            app:summary="Учтите: в случае с Яндексом, например, нужно создать отдельный пароль сугубо для подключения по WEBDAV"
+            app:title="Пароль учётной записи"
+            app:enableCopying="false" />
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+        <PreferenceCategory app:title="Дополнительно">
+
+            <SwitchPreferenceCompat
+            app:key="autoPasteLogin"
+            app:singleLineTitle="false"
+            app:title="Автозаполнение логина и пароля на экране входа" />
+
+        </PreferenceCategory>
+
     </PreferenceCategory>
 
-    </PreferenceCategory>
+    <Preference
+        app:title="Удалить все данные из приложения"
+        app:key="deletePreferences"
+        app:summary="Файлы на сервере тронуты не будут" />
+
 </PreferenceScreen>

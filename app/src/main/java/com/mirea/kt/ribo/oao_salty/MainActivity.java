@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -42,7 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String userLogin = prefReader.getString("userLogin", "null");
         String userPassword = prefReader.getString("userPassword", "null");
 
-        if ((!userLogin.equals("null")) && (!userPassword.equals("null"))) {
+        boolean autoLoginSwitch = (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("autoPasteLogin", true));
+
+        if ((!userLogin.equals("null")) && (!userPassword.equals("null")) && autoLoginSwitch) {
             loginInputField.setText(userLogin.replace("\"", ""));
             passwordInputField.setText(userPassword.replace("\"", ""));
         }
@@ -60,7 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Thread userAuthThread = new Thread(credentialsToCheck);
             userAuthThread.start();
 
-            if (this.getSupportActionBar() != null) { getSupportActionBar().setTitle("Подключение..."); }
+            if (this.getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Подключение...");
+            }
             try {
                 userAuthThread.join();
             } catch (InterruptedException e) {
@@ -78,16 +83,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         startActivity(intentMainInterface);
                         break;
                     case "not allowed":
-                        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("PersonalPhotos"); }
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle("PersonalPhotos");
+                        }
                         Toast.makeText(this, "Неверные логин и/или пароль.", Toast.LENGTH_LONG).show();
                         break;
                     case "not connected to auth-server":
-                        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("PersonalPhotos"); }
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle("PersonalPhotos");
+                        }
                         Toast.makeText(this, "Нет связи с сервером авторизации.", Toast.LENGTH_SHORT).show();
                         Toast.makeText(this, "Проверьте сетевые настройки устройства.", Toast.LENGTH_SHORT).show();
                         break;
                     case "was connected, but then was suddenly disconnected":
-                        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("PersonalPhotos"); }
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle("PersonalPhotos");
+                        }
                         Toast.makeText(this, "Сервер разорвал соединение.", Toast.LENGTH_SHORT).show();
                         break;
                 }

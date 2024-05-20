@@ -10,8 +10,10 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.util.HashSet;
 
@@ -24,7 +26,7 @@ public class FolderPicker extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPaths = getSharedPreferences("SharedData", MODE_PRIVATE);
+        sharedPaths = getSharedPreferences("PathsData", MODE_PRIVATE);
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
@@ -36,34 +38,30 @@ public class FolderPicker extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null)
-        {
-            final Runnable thread = ()->{
+        if (data != null) {
+            final Runnable thread = () -> {
 
                 Uri uri = data.getData();
                 getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 SharedPreferences prefEditor = sharedPaths;
 
-                if (!prefEditor.contains("listOfPaths"))
-                {
+                if (!prefEditor.contains("listOfPaths")) {
                     HashSet<String> allSavedDFPaths = new HashSet<>();
                     allSavedDFPaths.add(uri.toString());
 
                     Gson gson = new Gson();
                     String dataWrappedInString = gson.toJson(allSavedDFPaths);
                     prefEditor.edit().putString("listOfPaths", dataWrappedInString).apply();
-                }
-                else
-                {
+                } else {
                     Gson gson = new Gson();
 
                     String encodedStringedPaths = prefEditor.getString("listOfPaths", "null");
-                    Type convertType = new TypeToken<HashSet<String>>(){}.getType();
+                    Type convertType = new TypeToken<HashSet<String>>() {
+                    }.getType();
                     HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
 
-                    if (!allSavedDFPaths.contains(uri.toString()))
-                    {
+                    if (!allSavedDFPaths.contains(uri.toString())) {
                         allSavedDFPaths.add(uri.toString());
 
                         String dataWrappedInString = gson.toJson(allSavedDFPaths);
@@ -72,8 +70,7 @@ public class FolderPicker extends AppCompatActivity {
                 }
             };
             new Thread(thread).start();
-        }
-        else {
+        } else {
             blockedFilesRelatedQueue.add("no directories were chosen in the device's memory by the user");
         }
 
