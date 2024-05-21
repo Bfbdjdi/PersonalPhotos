@@ -1,5 +1,6 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedExceptionReasonQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
 
 
@@ -28,6 +29,7 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -40,8 +42,6 @@ public class WEBDAVSync extends ContextWrapper {
     private String driveURL = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("driveURL", "driveURL not avail");
 
     private String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
-
-
 
     public WEBDAVSync(Context contexter) {
         super(contexter);
@@ -76,9 +76,12 @@ public class WEBDAVSync extends ContextWrapper {
     SharedPreferences sharedPaths;
 
     public void fileUploader() {
+
         final Runnable thread = () -> {
 
-            try {
+            if ((!this.driveURL.equals("driveURL not avail")) && (!this.login.equals("login not avail")) &&
+                    (!this.password.equals("password not avail")) && (!this.folderNameUploadIn.equals("folderNameUploadIn not avail"))) {
+
 
                 //Setting up basic connectivity
                 OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -94,13 +97,20 @@ public class WEBDAVSync extends ContextWrapper {
                     if (!sardine.exists(this.driveURL + "/" + this.folderNameUploadIn)) {
                         sardine.createDirectory(this.driveURL + "/" + this.folderNameUploadIn);
                     }
-                } catch (IOException e) {
-                    blockedNetworkRelatedQueue.add("failed creating PersonalPhotos folder in the WEBDAV");
-                    System.out.println("failed creating PersonalPhotos folder in the WEBDAV");
+                } catch (IOException | IllegalArgumentException e) {
+                    if (blockedNetworkRelatedQueue.isEmpty()) {
+                        blockedNetworkRelatedQueue.add("failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?");
+                    }
+                    if (blockedNetworkRelatedQueue.isEmpty()) {
+                        blockedExceptionReasonQueue.add(e.getMessage());
+                    }
+                    System.out.println("failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?");
+                    System.out.println("Exception has occured: \n" + e.getMessage());
+                    return;
                 }
 
                 //Retrieving Uri's from SharedPrefs
-                sharedPaths = getSharedPreferences("SharedData", MODE_PRIVATE);
+                sharedPaths = getSharedPreferences("PathsData", MODE_PRIVATE);
                 SharedPreferences prefReader = sharedPaths;
                 String encodedStringedPaths = prefReader.getString("listOfPaths", "null");
 
@@ -111,6 +121,8 @@ public class WEBDAVSync extends ContextWrapper {
 
                 //Getting Uri's and adding them into HashSet
                 HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
+
+                //!!! если нет путей, то HashSet = null !!!
 
                 //Listing every file name that exists in the cloud folder
                 List<DavResource> alreadyUploadedFilesDAV = null;
@@ -155,9 +167,11 @@ public class WEBDAVSync extends ContextWrapper {
                         }
                     }
                 }
-            } catch (IllegalStateException e) {
-                System.out.println("Was connected to the auth-server, but then was suddenly disconnected.");
-                blockedNetworkRelatedQueue.add("was connected, but then was suddenly disconnected");
+
+            } else {
+                if (blockedNetworkRelatedQueue.isEmpty()) {
+                    blockedNetworkRelatedQueue.add("some user data is not provided");
+                }
             }
         };
         new Thread(thread).start();

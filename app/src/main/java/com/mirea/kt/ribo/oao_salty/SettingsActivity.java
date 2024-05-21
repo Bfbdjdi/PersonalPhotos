@@ -1,6 +1,9 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.content.Context;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -11,6 +14,10 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +39,6 @@ public class SettingsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> {
             finish();
         });
-
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -41,78 +47,89 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
         }
 
-        private static boolean userInputChecker(String variable, String type) {
+        private static ArrayList<String> userInputChecker(Context context) {
             Pattern pattern = null;
 
-            switch (type) {
-                case "login":
-                    pattern = Pattern.compile("[^0-9a-zA-Z-_@.:]");
-                    break;
-                case "password":
-                    pattern = Pattern.compile("[^0-9a-zA-Z-_!/#$%&'()*+,\".:;<=>?@^`{|}~]");
-                    break;
-                case "driveURL":
-                    pattern = Pattern.compile("[^0-9a-zA-Z-^_@.:/]");
-                    break;
-                case "WEBDAVFolderName":
-                    pattern = Pattern.compile("[^0-9a-zA-Z-_]");
+            String login = PreferenceManager.getDefaultSharedPreferences(context).getString("userWEBDAVLogin", "login not avail");
+            String password = PreferenceManager.getDefaultSharedPreferences(context).getString("userWEBDAVPassword", "password not avail");
+            String driveURL = PreferenceManager.getDefaultSharedPreferences(context).getString("driveURL", "driveURL not avail").trim();
+            String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(context).getString("folderNameUploadIn", "folderNameUploadIn not avail");
+
+            HashMap<String, String> variablesList = new HashMap<>();
+            variablesList.put("userWEBDAVLogin", login);
+            variablesList.put("userWEBDAVPassword", password);
+            variablesList.put("driveURL", driveURL);
+            variablesList.put("folderNameUploadIn", folderNameUploadIn);
+
+            ArrayList<String> wrongInputList = new ArrayList<>();
+
+            for (Map.Entry<String, String> entry : variablesList.entrySet()) {
+                switch (entry.getKey()) {
+                    case "userWEBDAVLogin":
+                        pattern = Pattern.compile("[^0-9a-zA-Z-_@.:]");
+                        break;
+                    case "userWEBDAVPassword":
+                        pattern = Pattern.compile("[^0-9a-zA-Z-_!/#$%&'()*+,\".:;<=>?@^`{|}~]");
+                        break;
+                    case "driveURL":
+                        pattern = Pattern.compile("[^0-9a-zA-Z-^_@.:/]");
+                        break;
+                    case "folderNameUploadIn":
+                        pattern = Pattern.compile("[^0-9a-zA-Zа-яА-Я-_ ]");
+                }
+
+                assert pattern != null;
+                Matcher matcher = pattern.matcher(entry.getValue());
+
+                if (matcher.find()) {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().remove(entry.getKey()).apply();
+                    wrongInputList.add(entry.getKey());
+                } else {
+                    SharedPreferences prefReader = PreferenceManager.getDefaultSharedPreferences(context);
+                    String userTrimmedData = prefReader.getString(entry.getKey(), "null").trim();
+                    prefReader.edit().putString(entry.getKey(), userTrimmedData).apply();
+                }
             }
+            return wrongInputList;
+        }
 
-            Matcher matcher = pattern.matcher(variable);
+        SharedPreferences.OnSharedPreferenceChangeListener listener;
 
-            return matcher.find();
+        @Override
+        public void onResume() {
+            super.onResume();
+            Objects.requireNonNull(getPreferenceScreen().getSharedPreferences()).registerOnSharedPreferenceChangeListener(listener);
         }
 
         @Override
         public void onPause() {
             super.onPause();
-
-            String login = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("userWEBDAVLogin", "login not avail");
-            String password = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("userWEBDAVPassword", "password not avail");
-            String driveURL = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("driveURL", "driveURL not avail");
-            String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
-
-            //Toasts
-            {
-                if (userInputChecker(login, "login") && (!login.equals("login not avail"))) {
-                    Toast.makeText(this.getContext(), "Логин содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-                if (userInputChecker(password, "password") && (!password.equals("password not avail"))) {
-                    Toast.makeText(this.getContext(), "Пароль содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-                if (userInputChecker(driveURL, "driveURL") && (!driveURL.equals("driveURL not avail"))) {
-                    Toast.makeText(this.getContext(), "Адрес содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-                if (userInputChecker(folderNameUploadIn, "WEBDAVFolderName") && (!folderNameUploadIn.equals("folderNameUploadIn not avail"))) {
-                    Toast.makeText(this.getContext(), "Название папки содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-            }
+            Objects.requireNonNull(getPreferenceScreen().getSharedPreferences()).unregisterOnSharedPreferenceChangeListener(listener);
         }
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            String login = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("userWEBDAVLogin", "login not avail");
-            String password = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("userWEBDAVPassword", "password not avail");
-            String driveURL = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("driveURL", "driveURL not avail");
-            String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
-
-            //Toasts
-            {
-                if (userInputChecker(login, "login") && (!login.equals("login not avail"))) {
-                    Toast.makeText(this.getContext(), "Логин содержит не те символы", Toast.LENGTH_SHORT).show();
+            listener = (prefs, key) -> {
+                ArrayList<String> wrongInputList = userInputChecker(requireContext());
+                for (String element : wrongInputList) {
+                    switch (element) {
+                        case "userWEBDAVLogin":
+                            Toast.makeText(requireContext(), "Логин содержит не те символы", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "userWEBDAVPassword":
+                            Toast.makeText(requireContext(), "Пароль содержит не те символы", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "driveURL":
+                            Toast.makeText(requireContext(), "Адрес содержит не те символы", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "folderNameUploadIn":
+                            Toast.makeText(requireContext(), "Название папки содержит не те символы", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
                 }
-                if (userInputChecker(password, "password") && (!password.equals("password not avail"))) {
-                    Toast.makeText(this.getContext(), "Пароль содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-                if (userInputChecker(driveURL, "driveURL") && (!driveURL.equals("driveURL not avail"))) {
-                    Toast.makeText(this.getContext(), "Адрес содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-                if (userInputChecker(folderNameUploadIn, "WEBDAVFolderName") && (!folderNameUploadIn.equals("folderNameUploadIn not avail"))) {
-                    Toast.makeText(this.getContext(), "Название папки содержит не те символы", Toast.LENGTH_SHORT).show();
-                }
-            }
+            };
 
             Preference button = findPreference("deletePreferences");
 

@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -20,8 +22,7 @@ public class BottomActivity extends AppCompatActivity {
     public BottomActivity() {
     }
 
-    private void replaceFragment(Fragment fragment)
-    {
+    private void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(null);
@@ -30,6 +31,8 @@ public class BottomActivity extends AppCompatActivity {
 
     static ArrayBlockingQueue<String> blockedNetworkRelatedQueue = new ArrayBlockingQueue<>(1, true);
     static ArrayBlockingQueue<String> blockedFilesRelatedQueue = new ArrayBlockingQueue<>(1, true);
+
+    static ArrayBlockingQueue<String> blockedExceptionReasonQueue = new ArrayBlockingQueue<>(1, true);
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -43,13 +46,14 @@ public class BottomActivity extends AppCompatActivity {
 
         String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();
         String errorFileMessage = blockedFilesRelatedQueue.poll();
+        String exceptionCodes = blockedExceptionReasonQueue.poll();
 
-        if (errorNetworkingMessage != null)
-        {
-            switch (Objects.requireNonNull(errorNetworkingMessage))
-            {
-                case "failed creating PersonalPhotos folder in the WEBDAV":
-                    Toast.makeText(this, "Не создал папку PP в облаке.", Toast.LENGTH_SHORT).show();
+        if (errorNetworkingMessage != null) {
+            switch (Objects.requireNonNull(errorNetworkingMessage)) {
+                case "failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?":
+                    Toast.makeText(this, "Не создал папку для сохранения в облаке.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Адрес сервера, данные аккаунта верно указаны?", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, exceptionCodes, Toast.LENGTH_LONG).show();
                     break;
                 case "failed listing files in the WEBDAV":
                     Toast.makeText(this, "Не узнал о файлах в папке PP облака.", Toast.LENGTH_SHORT).show();
@@ -60,13 +64,14 @@ public class BottomActivity extends AppCompatActivity {
                 case "was connected, but then was suddenly disconnected":
                     Toast.makeText(this, "Связь с сервером WEBDAV потеряна.", Toast.LENGTH_SHORT).show();
                     break;
+                case "some user data is not provided":
+                    Toast.makeText(this, "Указаны не все требуемые данные для работы с WEBDAV.", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
 
-        if (errorFileMessage != null)
-        {
-            switch (Objects.requireNonNull(errorFileMessage))
-            {
+        if (errorFileMessage != null) {
+            switch (Objects.requireNonNull(errorFileMessage)) {
                 case "no directories were chosen in the device's memory by the user":
                     Toast.makeText(this, "Отмена выбора папки.", Toast.LENGTH_SHORT).show();
                     break;
@@ -87,8 +92,7 @@ public class BottomActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item ->
         {
-            switch (item.getItemId())
-            {
+            switch (item.getItemId()) {
                 case R.id.navigation_folders:
                     replaceFragment(new FoldersFragment());
                     return true;

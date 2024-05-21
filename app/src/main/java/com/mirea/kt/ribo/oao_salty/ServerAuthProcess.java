@@ -1,5 +1,7 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -109,11 +111,11 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
 
                 switch (result) {
                     case 1:
-                        blockedQueue.add("allowed");
+                        if (blockedNetworkRelatedQueue.isEmpty()) { blockedQueue.add("allowed"); }
                         autoSaveLoginUsingSharedPrefs(userLogin, userPassword, contexter);
                         break;
                     case -1:
-                        blockedQueue.add("not allowed");
+                        if (blockedNetworkRelatedQueue.isEmpty()) { blockedQueue.add("not allowed"); }
                         break;
                     default:
                         //log.d
@@ -124,10 +126,9 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
             throw new RuntimeException(e);
         } catch (IOException e) {
             System.out.println("No internet connectivity. Unable to auth the user.");
-            blockedQueue.add("not connected to auth-server");
-        } catch (IllegalStateException e){
-            System.out.println("Was connected to the auth-server, but then was suddenly disconnected.");
-            blockedQueue.add("was connected, but then was suddenly disconnected");
+            if (blockedNetworkRelatedQueue.isEmpty()) {
+                blockedQueue.add("not connected to auth-server");
+            }
         }
     }
 

@@ -24,10 +24,6 @@ public class FoldersFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_folders, container, false);
 
-        /*String login = "goshabelin@yandex.ru";
-        String password = "sttumbcxmhmdipvq";
-        String driveURL = "https://webdav.yandex.ru";*/
-
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
         //WEBDAVUtil.foldersPathsObtainer();
         //WEBDAVUtil.fileUploader();
