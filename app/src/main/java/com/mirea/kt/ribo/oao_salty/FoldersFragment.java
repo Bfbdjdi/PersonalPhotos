@@ -1,7 +1,6 @@
 package com.mirea.kt.ribo.oao_salty;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ public class FoldersFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -26,7 +26,8 @@ public class FoldersFragment extends Fragment {
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
         //WEBDAVUtil.foldersPathsObtainer();
-        //WEBDAVUtil.fileUploader();
+        //WEBDAVUtil.fileUploader("startServiceFileUploader");
+
         return rootView;
     }
 }

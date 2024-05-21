@@ -86,8 +86,8 @@ public class BottomActivity extends AppCompatActivity {
         });
 
 
-        //Toolbar toolbar = findViewById(R.id.mainToolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = findViewById(R.id.mainToolbar);
+        setSupportActionBar(toolbar);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item ->
