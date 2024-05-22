@@ -31,9 +31,10 @@
         <PreferenceCategory app:title="Дополнительно">
 
             <SwitchPreferenceCompat
-            app:key="autoPasteLogin"
-            app:singleLineTitle="false"
-            app:title="Автозаполнение логина и пароля на экране входа" />
+                app:key="autoPasteLogin"
+                app:singleLineTitle="false"
+                app:title="Автозаполнение логина и пароля на экране входа"
+                app:defaultValue="true" />
 
         </PreferenceCategory>
 
@@ -42,6 +43,7 @@
     <Preference
         app:title="Удалить все данные из приложения"
         app:key="deletePreferences"
+        app:icon="@drawable/icon_trash"
         app:summary="Файлы на сервере тронуты не будут" />
 
 </PreferenceScreen>

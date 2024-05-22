@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    compileOptions.encoding = 'UTF-8'
     namespace 'com.mirea.kt.ribo.oao_salty'
     compileSdk 34
 
@@ -38,6 +39,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -47,7 +51,7 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.transport.runtime
-    //implementation libs.pig
+    implementation libs.preference
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
@@ -55,20 +59,22 @@ dependencies {
     implementation 'commons-io:commons-io:2.12.0'
     implementation "com.anggrayudi:storage:1.5.5"
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation(libs.okhttp)
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
+    implementation 'com.github.thegrizzlylabs:sardine-android:0.9'
+
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
+
+    //implementation 'com.github.muddassir235:connection_checker:1.7'
 //    implementation 'com.cedarsoftware:json-io:4.24.0'
 //    implementation libs.json.lib.core
     //implementation libs.json.lib.core.v303
     //implementation("net.elytrium:serializer:1.1.1")
-
-
-
-
-
-    implementation(libs.okhttp)
-
     //implementation libs.dav4jvm
 //    implementation 'com.github.thegrizzlylabs:sardine-android:<0.9>'
-    implementation 'com.github.thegrizzlylabs:sardine-android:0.9'
+
 }
 
 
