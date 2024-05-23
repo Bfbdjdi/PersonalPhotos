@@ -2,6 +2,7 @@ package com.mirea.kt.ribo.oao_salty;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -30,7 +32,7 @@ public class FoldersFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public HashMap<String, String> pathsTypeConverter() {
+    public HashMap<String, String> pathsLabelBuilder() {
         HashMap<String, String> pathsBothLongShort = new HashMap<>();
 
         //Retrieving Uri's from SharedPrefs
@@ -40,7 +42,7 @@ public class FoldersFragment extends Fragment {
 
         //Setting up GSON
         Gson gson = new Gson();
-        Type convertType = new TypeToken<HashSet<String>>() {}.getType();
+        Type convertType = new TypeToken<HashSet<String>>(){}.getType();
 
         //Getting Uri's and adding them into HashSet
         HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
@@ -49,26 +51,25 @@ public class FoldersFragment extends Fragment {
             String shortPathFromSP;
             String longPathFromSP;
             try {
-                shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%2F") - 1);
+                if (entry.contains("%2F")) {
+                    shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%2F") - 1);
+                } else {
+                    shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%3A") + 1);
+                }
+
                 longPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("/primary"));
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
 
-            pathsBothLongShort.put(shortPathFromSP, longPathFromSP);
+            pathsBothLongShort.put(longPathFromSP, shortPathFromSP);
         }
         return pathsBothLongShort;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public void adapterFilePathsUpdater() {
         HashMap<String, String> listOfFilesPathsToShow;
-
-        View rootView = inflater.inflate(R.layout.fragment_folders, container, false);
-
-        listOfFilesPathsToShow = pathsTypeConverter();
+        listOfFilesPathsToShow = pathsLabelBuilder();
 
         ArrayList<FilePathsToInflate> arrayOfPaths = new ArrayList<>();
 
@@ -76,16 +77,47 @@ public class FoldersFragment extends Fragment {
             arrayOfPaths.add(new FilePathsToInflate(set.getKey(), set.getValue()));
         }
 
-        RecyclerView rcView = rootView.findViewById(R.id.rvFilePaths);
-        FilePathsAdapter adapter = new FilePathsAdapter(arrayOfPaths);
+        RecyclerView rcView = rootViewThisLocal.findViewById(R.id.rvFilePaths);
+        FilePathsAdapter adapter = new FilePathsAdapter(arrayOfPaths, FoldersFragment.this);
         rcView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         rcView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        adapterFilePathsUpdater();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        adapterFilePathsUpdater();
+    }
+
+    private View rootViewThisLocal;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        rootViewThisLocal = inflater.inflate(R.layout.fragment_folders, container, false);
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
-        //WEBDAVUtil.foldersPathsObtainer();
+
+        Button addPathsButton = rootViewThisLocal.findViewById(R.id.addPathsButton);
+        addPathsButton.setOnClickListener(item ->
+        {
+            WEBDAVUtil.foldersPathsObtainer();
+        });
+
+        adapterFilePathsUpdater();
+
         //WEBDAVUtil.fileUploader("startServiceFileUploader");
 
-        return rootView;
+        return rootViewThisLocal;
     }
 
     @Override

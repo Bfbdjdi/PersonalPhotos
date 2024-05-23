@@ -3,7 +3,6 @@ package com.mirea.kt.ribo.oao_salty;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -14,7 +13,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class BottomActivity extends AppCompatActivity {
@@ -40,43 +38,12 @@ public class BottomActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        Intent serviceTogglerIntent = new Intent(this, EventsNotifierService.class);
+        this.startService(serviceTogglerIntent);
+
         setContentView(R.layout.activity_bottom);
 
         replaceFragment(new FoldersFragment());
-
-        String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();
-        String errorFileMessage = blockedFilesRelatedQueue.poll();
-        String exceptionCodes = blockedExceptionReasonQueue.poll();
-
-        if (errorNetworkingMessage != null) {
-            switch (Objects.requireNonNull(errorNetworkingMessage)) {
-                case "failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?":
-                    Toast.makeText(this, "Не создал папку для сохранения в облаке.", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(this, "Адрес сервера, данные аккаунта верно указаны?", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(this, exceptionCodes, Toast.LENGTH_LONG).show();
-                    break;
-                case "failed listing files in the WEBDAV":
-                    Toast.makeText(this, "Не узнал о файлах в папке PP облака.", Toast.LENGTH_SHORT).show();
-                    break;
-                case "failed to upload a file to the WEBDAV":
-                    Toast.makeText(this, "Не смог загрузить файл в облако.", Toast.LENGTH_SHORT).show();
-                    break;
-                case "was connected, but then was suddenly disconnected":
-                    Toast.makeText(this, "Связь с сервером WEBDAV потеряна.", Toast.LENGTH_SHORT).show();
-                    break;
-                case "some user data is not provided":
-                    Toast.makeText(this, "Указаны не все требуемые данные для работы с WEBDAV.", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-
-        if (errorFileMessage != null) {
-            switch (Objects.requireNonNull(errorFileMessage)) {
-                case "no directories were chosen in the device's memory by the user":
-                    Toast.makeText(this, "Отмена выбора папки.", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
 
         FloatingActionButton settingsButton = findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(item ->
@@ -84,7 +51,6 @@ public class BottomActivity extends AppCompatActivity {
             Intent intentMainInterface = new Intent(this, SettingsActivity.class);
             startActivity(intentMainInterface);
         });
-
 
         Toolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);

@@ -1,6 +1,7 @@
 package com.mirea.kt.ribo.oao_salty;
 
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedFilesRelatedQueue;
+import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -33,6 +34,8 @@ public class FolderPicker extends AppCompatActivity {
 
         startActivityForResult(intent, 42);
     }
+
+    EventsNotifierService notifierService = new EventsNotifierService();
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -71,12 +74,13 @@ public class FolderPicker extends AppCompatActivity {
             };
             new Thread(thread).start();
         } else {
-            blockedFilesRelatedQueue.add("no directories were chosen in the device's memory by the user");
+            if (blockedNetworkRelatedQueue.isEmpty()) {
+                blockedFilesRelatedQueue.add("no directories were chosen in the device's memory by the user");
+                notifierService.onNotify(getApplicationContext());
+            }
         }
 
-        Intent returnToHomeMenu = new Intent(getApplicationContext(), FolderPicker.class);
-        returnToHomeMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(returnToHomeMenu);
+        finish();
     }
 }
 

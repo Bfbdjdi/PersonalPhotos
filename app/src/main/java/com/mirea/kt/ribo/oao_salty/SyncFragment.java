@@ -9,16 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashSet;
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SyncFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SyncFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -51,7 +41,9 @@ public class SyncFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     SharedPreferences sharedPaths;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

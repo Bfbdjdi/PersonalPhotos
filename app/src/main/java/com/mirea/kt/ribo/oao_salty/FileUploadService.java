@@ -42,6 +42,7 @@ public class FileUploadService extends Service {
     }
 
     SharedPreferences sharedPaths;
+    EventsNotifierService notifierService = new EventsNotifierService();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
@@ -75,9 +76,12 @@ public class FileUploadService extends Service {
                     } catch (IOException | IllegalArgumentException e) {
                         if (blockedNetworkRelatedQueue.isEmpty()) {
                             blockedNetworkRelatedQueue.add("failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?");
+                            notifierService.onNotify(getApplicationContext());
                         }
                         if (blockedNetworkRelatedQueue.isEmpty()) {
                             blockedExceptionReasonQueue.add(e.getMessage());
+                            notifierService.onNotify(getApplicationContext());
+
                         }
                         System.out.println("failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?");
                         System.out.println("Exception has occured: \n" + e.getMessage());
@@ -91,8 +95,7 @@ public class FileUploadService extends Service {
 
                     //Setting up GSON
                     Gson gson = new Gson();
-                    Type convertType = new TypeToken<HashSet<String>>() {
-                    }.getType();
+                    Type convertType = new TypeToken<HashSet<String>>() {}.getType();
 
                     //Getting Uri's and adding them into HashSet
                     HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
@@ -106,6 +109,7 @@ public class FileUploadService extends Service {
                     } catch (IOException e) {
                         System.out.println("failed listing files in the WEBDAV");
                         blockedNetworkRelatedQueue.add("failed listing files in the WEBDAV");
+                        notifierService.onNotify(getApplicationContext());
                     }
 
                     //If the cloud folder is not empty, uploading only non-uploaded files:
@@ -138,6 +142,7 @@ public class FileUploadService extends Service {
                                 } catch (IOException e) {
                                     blockedNetworkRelatedQueue.add("failed to upload a file to the WEBDAV");
                                     System.out.println("failed to upload a file to the WEBDAV");
+                                    notifierService.onNotify(getApplicationContext());
                                 }
                             }
                         }
@@ -146,6 +151,7 @@ public class FileUploadService extends Service {
                 } else {
                     if (blockedNetworkRelatedQueue.isEmpty()) {
                         blockedNetworkRelatedQueue.add("some user data is not provided");
+                        notifierService.onNotify(getApplicationContext());
                     }
                 }
             };
