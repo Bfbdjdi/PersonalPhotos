@@ -2,7 +2,6 @@ package com.mirea.kt.ribo.oao_salty;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -114,8 +113,6 @@ public class FoldersFragment extends Fragment {
         });
 
         adapterFilePathsUpdater();
-
-        //WEBDAVUtil.fileUploader("startServiceFileUploader");
 
         return rootViewThisLocal;
     }
