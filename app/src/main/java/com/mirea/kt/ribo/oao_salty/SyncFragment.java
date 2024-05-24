@@ -1,66 +1,105 @@
 package com.mirea.kt.ribo.oao_salty;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class SyncFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public SyncFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SyncFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SyncFragment newInstance(String param1, String param2) {
-        SyncFragment fragment = new SyncFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    SharedPreferences sharedPaths;
+    TextView mSyncStateChecker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-
     }
+
+    private Handler mHandler = new Handler();
+    private Runnable syncCheckerTask = new Runnable() {
+        @Override
+        public void run() {
+            Button togglerSyncButtonTV = (Button) rootViewThisLocal.findViewById(R.id.togglerSyncButton);
+            if (!syncTogglerButton[0]) togglerSyncButtonTV.setText("Начать синхронизацию");
+            mHandler.post(syncCheckerTask);
+        }
+    };
+
+    private View rootViewThisLocal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sync, container, false);
+        rootViewThisLocal = inflater.inflate(R.layout.fragment_sync, container, false);
 
+        mSyncStateChecker = rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
+        updateTextViews();
+        return rootViewThisLocal;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateTextViews();
+        mHandler.post(syncCheckerTask);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mHandler.removeCallbacks(syncCheckerTask);
+    }
+
+    final static Boolean[] syncTogglerButton = {false};
+
+    void updateTextViews() {
+
+        TextView previousSyncMomentTV = (TextView) rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
+        TextView totalFilesSavedTV = (TextView) rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
+        TextView driveURLTV = (TextView) rootViewThisLocal.findViewById(R.id.driveURLTV);
+        Button togglerSyncButtonTV = (Button) rootViewThisLocal.findViewById(R.id.togglerSyncButton);
+
+        if (syncTogglerButton[0]) {
+            togglerSyncButtonTV.setText("Отменить синхронизацию...");
+        } else {
+            togglerSyncButtonTV.setText("Начать синхронизацию");
+        }
+
+        String driveURL = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("driveURL", "driveURL not avail");
+        String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
+
+        //Setting up GSON
+        //Gson gson = new Gson();
+        //Type convertType = new TypeToken<HashSet<String>>() {}.getType();
+
+        WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
+
+        togglerSyncButtonTV.setOnClickListener(item ->
+        {
+            String serviceControllerCommand;
+            syncTogglerButton[0] = !syncTogglerButton[0];
+
+            if (syncTogglerButton[0]) {
+                serviceControllerCommand = "startServiceFileUploader";
+                togglerSyncButtonTV.setText("Отменить синхронизацию...");
+            } else {
+                serviceControllerCommand = "stopServiceFileUploader";
+                togglerSyncButtonTV.setText("Начать синхронизацию");
+            }
+
+            WEBDAVUtil.fileUploader(serviceControllerCommand);
+        });
+
+        driveURLTV.setText(driveURL + "/" + folderNameUploadIn);
+    }
 }

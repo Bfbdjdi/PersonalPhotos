@@ -2,6 +2,7 @@ package com.mirea.kt.ribo.oao_salty;
 
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedExceptionReasonQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
+import static com.mirea.kt.ribo.oao_salty.SyncFragment.syncTogglerButton;
 
 import android.app.Service;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 
 public class FileUploadService extends Service {
+
     public FileUploadService() {
     }
 
@@ -130,19 +132,22 @@ public class FileUploadService extends Service {
 
                             //Uploading files (sometimes) one by one
                             for (DocumentFile file : directoryTreeOfFiles.listFiles()) {
-                                System.out.println(file.getName());
-                                try {
-                                    if (!sardine.exists(driveURL + "/" + folderNameUploadIn + "/" + file.getName())) {
-                                        InputStream fis = DocumentFileUtils.openInputStream(file, this);
-                                        sardine.put(driveURL + "/" + folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
-                                        System.out.println(file.getName() + " - has been uploaded.");
-                                    } else {
-                                        System.out.println(file.getName() + " - skipping duplicate");
+
+                                if (file.isFile()) {
+                                    System.out.println(file.getName());
+                                    try {
+                                        if (!sardine.exists(driveURL + "/" + folderNameUploadIn + "/" + file.getName())) {
+                                            InputStream fis = DocumentFileUtils.openInputStream(file, this);
+                                            sardine.put(driveURL + "/" + folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
+                                            System.out.println(file.getName() + " - has been uploaded.");
+                                        } else {
+                                            System.out.println(file.getName() + " - skipping duplicate");
+                                        }
+                                    } catch (IOException e) {
+                                        blockedNetworkRelatedQueue.add("failed to upload a file to the WEBDAV");
+                                        System.out.println("failed to upload a file to the WEBDAV");
+                                        notifierService.onNotify(getApplicationContext());
                                     }
-                                } catch (IOException e) {
-                                    blockedNetworkRelatedQueue.add("failed to upload a file to the WEBDAV");
-                                    System.out.println("failed to upload a file to the WEBDAV");
-                                    notifierService.onNotify(getApplicationContext());
                                 }
                             }
                         }
@@ -154,11 +159,20 @@ public class FileUploadService extends Service {
                         notifierService.onNotify(getApplicationContext());
                     }
                 }
+                Log.i("ServiceRuntimeInfo", "Selfstop as task is completed");
+
+                syncTogglerButton[0] = false;
+
+                stopForeground(true);
+                stopSelfResult(startId);
             };
             new Thread(thread).start();
+
         }
         else if (Objects.equals(intent.getAction(), "serviceFileUploaderStop")) {
             Log.i("ServiceRuntimeInfo", "Received toStop Foreground Intent");
+
+            syncTogglerButton[0] = false;
 
             stopForeground(true);
             stopSelfResult(startId);

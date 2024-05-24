@@ -1,9 +1,11 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 
+import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.thegrizzlylabs.sardineandroid.DavResource;
@@ -56,11 +58,23 @@ public class WEBDAVSync extends ContextWrapper {
         Intent serviceTogglerIntent = new Intent(this, FileUploadService.class);
         if (Objects.equals(action, "startServiceFileUploader")) {
             serviceTogglerIntent.setAction("serviceFileUploaderStart");
+            System.out.println(action);
             this.startService(serviceTogglerIntent);
         }
         if (Objects.equals(action, "stopServiceFileUploader")) {
             serviceTogglerIntent.setAction("serviceFileUploaderStop");
+            System.out.println(action);
             this.startService(serviceTogglerIntent);
         }
     }
+
+    /*public boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }*/
 }

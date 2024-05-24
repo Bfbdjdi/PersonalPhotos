@@ -64,6 +64,9 @@ public class SettingsActivity extends AppCompatActivity {
             ArrayList<String> wrongInputList = new ArrayList<>();
 
             for (Map.Entry<String, String> entry : variablesList.entrySet()) {
+
+                boolean isItFolderName = false;
+
                 switch (entry.getKey()) {
                     case "userWEBDAVLogin":
                         pattern = Pattern.compile("[^0-9a-zA-Z-_@.:]");
@@ -76,6 +79,8 @@ public class SettingsActivity extends AppCompatActivity {
                         break;
                     case "folderNameUploadIn":
                         pattern = Pattern.compile("[^0-9a-zA-Zа-яА-Я-_ ]");
+                        isItFolderName = true;
+                        break;
                 }
 
                 assert pattern != null;
@@ -85,8 +90,17 @@ public class SettingsActivity extends AppCompatActivity {
                     PreferenceManager.getDefaultSharedPreferences(context).edit().remove(entry.getKey()).apply();
                     wrongInputList.add(entry.getKey());
                 } else {
+
                     SharedPreferences prefReader = PreferenceManager.getDefaultSharedPreferences(context);
-                    String userTrimmedData = prefReader.getString(entry.getKey(), "null").trim();
+                    String userTrimmedData;
+                    if (!isItFolderName)
+                    {
+                        userTrimmedData = prefReader.getString(entry.getKey(), "null").trim();
+                    }
+                    else
+                    {
+                        userTrimmedData = prefReader.getString(entry.getKey(), "PersonalPhotos").trim();
+                    }
                     prefReader.edit().putString(entry.getKey(), userTrimmedData).apply();
                 }
             }
