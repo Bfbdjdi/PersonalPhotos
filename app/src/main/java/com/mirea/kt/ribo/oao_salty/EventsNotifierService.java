@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
-import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedExceptionReasonQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedFilesRelatedQueue;
 
@@ -29,7 +28,6 @@ public class EventsNotifierService extends Service {
 
             String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();
             String errorFileMessage = blockedFilesRelatedQueue.poll();
-            //String exceptionCodes = blockedExceptionReasonQueue.poll();
 
             if (errorNetworkingMessage != null) {
                 switch (Objects.requireNonNull(errorNetworkingMessage)) {
@@ -58,9 +56,14 @@ public class EventsNotifierService extends Service {
                     case "no directories were chosen in the device's memory by the user":
                         Toast.makeText(contexter, "Отмена выбора папки.", Toast.LENGTH_SHORT).show();
                         break;
+                    case "no on-device directories were chosen to work with":
+                        Toast.makeText(contexter, "Для синхронизации выберите папки с файлами на устройстве.", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "literally no files to upload":
+                        Toast.makeText(contexter, "Буквально нет файлов для синхронизации.", Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
-
         });
     }
 

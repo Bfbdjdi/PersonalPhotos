@@ -1,5 +1,8 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -28,8 +31,22 @@ public class SyncFragment extends Fragment {
     private Runnable syncCheckerTask = new Runnable() {
         @Override
         public void run() {
-            Button togglerSyncButtonTV = (Button) rootViewThisLocal.findViewById(R.id.togglerSyncButton);
-            if (!syncTogglerButton[0]) togglerSyncButtonTV.setText("Начать синхронизацию");
+            Button togglerSyncButtonTV = rootViewThisLocal.findViewById(R.id.togglerSyncButton);
+            TextView previousSyncMomentTV = rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
+            TextView totalFilesSavedTV = rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
+
+            String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "last sync moment not avail");
+            SharedPreferences totalPathsCounterSP = requireContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
+            Integer totalPathsCounter = totalPathsCounterSP.getInt("totalFilesDownloaded", -0);
+
+            previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
+            if (totalPathsCounter != 0) {
+                totalFilesSavedTV.setText(totalPathsCounter.toString());
+            }
+            if (!syncTogglerButton[0]) {
+                togglerSyncButtonTV.setText("Начать синхронизацию");
+            }
+
             mHandler.post(syncCheckerTask);
         }
     };
@@ -65,7 +82,7 @@ public class SyncFragment extends Fragment {
     void updateTextViews() {
 
         TextView previousSyncMomentTV = (TextView) rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
-        TextView totalFilesSavedTV = (TextView) rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
+        //TextView totalFilesSavedTV = (TextView) rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
         TextView driveURLTV = (TextView) rootViewThisLocal.findViewById(R.id.driveURLTV);
         Button togglerSyncButtonTV = (Button) rootViewThisLocal.findViewById(R.id.togglerSyncButton);
 
@@ -77,10 +94,12 @@ public class SyncFragment extends Fragment {
 
         String driveURL = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("driveURL", "driveURL not avail");
         String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
+        String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "last sync moment not avail");
 
-        //Setting up GSON
-        //Gson gson = new Gson();
-        //Type convertType = new TypeToken<HashSet<String>>() {}.getType();
+        if ((!driveURL.equals("driveURL not avail")) && (!theTimeTheUploadSucceeded.equals("last sync moment not avail"))) {
+            driveURLTV.setText(String.format("%s/%s", driveURL, folderNameUploadIn));
+            previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
+        }
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
 
@@ -99,7 +118,5 @@ public class SyncFragment extends Fragment {
 
             WEBDAVUtil.fileUploader(serviceControllerCommand);
         });
-
-        driveURLTV.setText(driveURL + "/" + folderNameUploadIn);
     }
 }

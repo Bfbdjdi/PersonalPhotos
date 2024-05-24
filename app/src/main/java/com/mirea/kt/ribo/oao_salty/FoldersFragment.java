@@ -41,27 +41,29 @@ public class FoldersFragment extends Fragment {
 
         //Setting up GSON
         Gson gson = new Gson();
-        Type convertType = new TypeToken<HashSet<String>>(){}.getType();
+        Type convertType = new TypeToken<HashSet<String>>() {
+        }.getType();
 
         //Getting Uri's and adding them into HashSet
         HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
+        if (allSavedDFPaths != null) {
+            for (String entry : allSavedDFPaths) {
+                String shortPathFromSP;
+                String longPathFromSP;
+                try {
+                    if (entry.contains("%2F")) {
+                        shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%2F") - 1);
+                    } else {
+                        shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%3A") + 1);
+                    }
 
-        for (String entry : allSavedDFPaths) {
-            String shortPathFromSP;
-            String longPathFromSP;
-            try {
-                if (entry.contains("%2F")) {
-                    shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%2F") - 1);
-                } else {
-                    shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%3A") + 1);
+                    longPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("/primary"));
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
                 }
 
-                longPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("/primary"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                pathsBothLongShort.put(longPathFromSP, shortPathFromSP);
             }
-
-            pathsBothLongShort.put(longPathFromSP, shortPathFromSP);
         }
         return pathsBothLongShort;
     }

@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,15 +58,20 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
 
         //Setting up GSON
         Gson gson = new Gson();
-        Type convertType = new TypeToken<Set<String>>() {}.getType();
+        Type convertType = new TypeToken<Set<String>>() {
+        }.getType();
 
         //Getting Uri's and adding them into HashSet
         Set<String> allSavedPathsDatasPaths = gson.fromJson(encodedStringedPaths, convertType);
         Set<String> allSavedPathsDatasPathsModified = new HashSet<>();
 
         for (String entry : allSavedPathsDatasPaths) {
-            if (!entry.contains(pathsContainer.get(position).getShortPath())) {
-                allSavedPathsDatasPathsModified.add(entry);
+            try {
+                if (!URLDecoder.decode(entry, "UTF-8").contains(pathsContainer.get(position).getShortPath())) {
+                    allSavedPathsDatasPathsModified.add(entry);
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
             }
         }
 

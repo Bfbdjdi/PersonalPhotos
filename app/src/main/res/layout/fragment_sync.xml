@@ -74,7 +74,9 @@
             android:layout_height="wrap_content"
             android:text="(синхронизаций пока не было)"
             android:textSize="16sp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -91,7 +93,9 @@
             android:layout_height="wrap_content"
             android:text="(пока не было сохранено ни одного)"
             android:textSize="16sp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -108,7 +112,9 @@
             android:layout_height="wrap_content"
             android:text="(пока что место не выбрано)"
             android:textSize="16sp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

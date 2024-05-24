@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
             ArrayList<String> wrongInputList = new ArrayList<>();
 
             for (Map.Entry<String, String> entry : variablesList.entrySet()) {
+                System.out.println(entry);
 
                 boolean isItFolderName = false;
 
@@ -93,12 +95,9 @@ public class SettingsActivity extends AppCompatActivity {
 
                     SharedPreferences prefReader = PreferenceManager.getDefaultSharedPreferences(context);
                     String userTrimmedData;
-                    if (!isItFolderName)
-                    {
+                    if (!isItFolderName) {
                         userTrimmedData = prefReader.getString(entry.getKey(), "null").trim();
-                    }
-                    else
-                    {
+                    } else {
                         userTrimmedData = prefReader.getString(entry.getKey(), "PersonalPhotos").trim();
                     }
                     prefReader.edit().putString(entry.getKey(), userTrimmedData).apply();
@@ -125,33 +124,17 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            listener = (prefs, key) -> {
-                ArrayList<String> wrongInputList = userInputChecker(requireContext());
-                for (String element : wrongInputList) {
-                    switch (element) {
-                        case "userWEBDAVLogin":
-                            Toast.makeText(requireContext(), "Логин содержит не те символы", Toast.LENGTH_SHORT).show();
-                            break;
-                        case "userWEBDAVPassword":
-                            Toast.makeText(requireContext(), "Пароль содержит не те символы", Toast.LENGTH_SHORT).show();
-                            break;
-                        case "driveURL":
-                            Toast.makeText(requireContext(), "Адрес содержит не те символы", Toast.LENGTH_SHORT).show();
-                            break;
-                        case "folderNameUploadIn":
-                            Toast.makeText(requireContext(), "Название папки содержит не те символы", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                }
-            };
-
             Preference button = findPreference("deletePreferences");
+
+            AtomicBoolean canListenerBeTriggered = new AtomicBoolean(true);
 
             if (button != null) {
                 button.setOnPreferenceClickListener(preference -> {
+                    canListenerBeTriggered.set(false);
                     PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().clear().apply();
                     requireContext().getSharedPreferences("UserData", MODE_PRIVATE).edit().clear().apply();
                     requireContext().getSharedPreferences("PathsData", MODE_PRIVATE).edit().clear().apply();
+                    requireContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE).edit().clear().apply();
 
                     Intent resetToLoginScreen = new Intent(requireContext(), MainActivity.class);
                     resetToLoginScreen.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -160,6 +143,29 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 });
             }
+
+            listener = (prefs, key) -> {
+                if (canListenerBeTriggered.get()) {
+                    ArrayList<String> wrongInputList = userInputChecker(requireContext());
+                    for (String element : wrongInputList) {
+                        switch (element) {
+                            case "userWEBDAVLogin":
+                                Toast.makeText(requireContext(), "Логин содержит не те символы", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "userWEBDAVPassword":
+                                Toast.makeText(requireContext(), "Пароль содержит не те символы", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "driveURL":
+                                Toast.makeText(requireContext(), "Адрес содержит не те символы", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "folderNameUploadIn":
+                                Toast.makeText(requireContext(), "Название папки содержит не те символы", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                    canListenerBeTriggered.set(true);
+                }
+            };
         }
     }
 }

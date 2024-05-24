@@ -2,7 +2,9 @@ package com.mirea.kt.ribo.oao_salty;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -31,6 +33,33 @@ public class BottomActivity extends AppCompatActivity {
     static ArrayBlockingQueue<String> blockedFilesRelatedQueue = new ArrayBlockingQueue<>(1, true);
 
     static ArrayBlockingQueue<String> blockedExceptionReasonQueue = new ArrayBlockingQueue<>(1, true);
+
+    private Handler mHandler = new Handler();
+    private Runnable syncCheckerTask = new Runnable() {
+        @Override
+        public void run() {
+            Toolbar toolbar = findViewById(R.id.mainToolbar);
+            setSupportActionBar(toolbar);
+
+            SharedPreferences tempPathsCounter = getApplicationContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
+
+            tempPathsCounter.getInt("TEMPhowManyItemsToUpload", 0);
+
+            mHandler.post(syncCheckerTask);
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHandler.post(syncCheckerTask);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mHandler.removeCallbacks(syncCheckerTask);
+    }
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -68,6 +97,7 @@ public class BottomActivity extends AppCompatActivity {
             }
             return false;
         });
+
 
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
