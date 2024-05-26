@@ -41,8 +41,7 @@ public class FoldersFragment extends Fragment {
 
         //Setting up GSON
         Gson gson = new Gson();
-        Type convertType = new TypeToken<HashSet<String>>() {
-        }.getType();
+        Type convertType = new TypeToken<HashSet<String>>() {}.getType();
 
         //Getting Uri's and adding them into HashSet
         HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
@@ -57,7 +56,12 @@ public class FoldersFragment extends Fragment {
                         shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%3A") + 1);
                     }
 
-                    longPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("/primary"));
+                    if (entry.lastIndexOf("/primary") != -1) {
+                        longPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("/primary"));
+                    } else {
+                        longPathFromSP = URLDecoder.decode(entry, "UTF-8");
+                    }
+
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 }
@@ -106,6 +110,8 @@ public class FoldersFragment extends Fragment {
 
         rootViewThisLocal = inflater.inflate(R.layout.fragment_folders, container, false);
 
+        adapterFilePathsUpdater();
+
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
 
         Button addPathsButton = rootViewThisLocal.findViewById(R.id.addPathsButton);
@@ -113,8 +119,6 @@ public class FoldersFragment extends Fragment {
         {
             WEBDAVUtil.foldersPathsObtainer();
         });
-
-        adapterFilePathsUpdater();
 
         return rootViewThisLocal;
     }

@@ -2,7 +2,7 @@ package com.mirea.kt.ribo.oao_salty;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -34,6 +34,8 @@ public class BottomActivity extends AppCompatActivity {
 
     static ArrayBlockingQueue<String> blockedExceptionReasonQueue = new ArrayBlockingQueue<>(1, true);
 
+    static int howManyFilesWereAlreadyUploadedRecFromFUS = 0;
+    static int howManyFilesToUploadRecFromFUS = 0;
     private Handler mHandler = new Handler();
     private Runnable syncCheckerTask = new Runnable() {
         @Override
@@ -41,9 +43,13 @@ public class BottomActivity extends AppCompatActivity {
             Toolbar toolbar = findViewById(R.id.mainToolbar);
             setSupportActionBar(toolbar);
 
-            SharedPreferences tempPathsCounter = getApplicationContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
-
-            tempPathsCounter.getInt("TEMPhowManyItemsToUpload", 0);
+            if (howManyFilesWereAlreadyUploadedRecFromFUS != 0) {
+                toolbar.setTitle("Выгружено: " + howManyFilesWereAlreadyUploadedRecFromFUS + "/" + howManyFilesToUploadRecFromFUS);
+            }
+            else
+            {
+                toolbar.setTitle("PersonalPhotos");
+            }
 
             mHandler.post(syncCheckerTask);
         }
@@ -72,7 +78,19 @@ public class BottomActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_bottom);
 
-        replaceFragment(new FoldersFragment());
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        if (this.getSharedPreferences("PathsData", MODE_PRIVATE)
+                .getString("listOfPaths", "[]").equals("[]"))
+        {
+            replaceFragment(new FoldersFragment());
+            bottomNavigationView.setSelectedItemId(R.id.navigation_folders);
+        }
+        else
+        {
+            replaceFragment(new SyncFragment());
+            bottomNavigationView.setSelectedItemId(R.id.navigation_sync);
+        }
 
         FloatingActionButton settingsButton = findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(item ->
@@ -84,7 +102,6 @@ public class BottomActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item ->
         {
             switch (item.getItemId()) {
@@ -97,7 +114,6 @@ public class BottomActivity extends AppCompatActivity {
             }
             return false;
         });
-
 
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

@@ -3,6 +3,8 @@ package com.mirea.kt.ribo.oao_salty;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedExceptionReasonQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedFilesRelatedQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
+import static com.mirea.kt.ribo.oao_salty.BottomActivity.howManyFilesToUploadRecFromFUS;
+import static com.mirea.kt.ribo.oao_salty.BottomActivity.howManyFilesWereAlreadyUploadedRecFromFUS;
 import static com.mirea.kt.ribo.oao_salty.SyncFragment.syncTogglerButton;
 import static com.mirea.kt.ribo.oao_salty.WEBDAVSync.isServiceToRun;
 
@@ -106,8 +108,7 @@ public class FileUploadService extends Service {
 
                     //Setting up GSON
                     Gson gson = new Gson();
-                    Type convertType = new TypeToken<HashSet<String>>() {
-                    }.getType();
+                    Type convertType = new TypeToken<HashSet<String>>() {}.getType();
 
                     //Getting Uri's and adding them into HashSet
                     HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
@@ -123,7 +124,7 @@ public class FileUploadService extends Service {
                     }
 
                     //If the cloud folder is not empty, uploading only non-uploaded files:
-                    if (!allSavedDFPaths.isEmpty()) {
+                    if (allSavedDFPaths != null) {
 
                         int howManyFilesToUpload = 0;
                         //Counting all the files to upload. As we need to know the exact number of all
@@ -141,14 +142,13 @@ public class FileUploadService extends Service {
                                     howManyFilesToUpload++;
                                 }
                             }
-
-                            //tempPathsCounter.edit().putInt("pathInTotalEverUploaded", howManyFilesToUpload).apply();
-
-                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("TEMPhowManyItemsToUpload", howManyFilesToUpload).apply();
+                            howManyFilesToUploadRecFromFUS = howManyFilesToUpload;
                         }
 
                         //Uploading files from each file path, retrieved from SharedPrefs
                         if (!allSavedDFPaths.isEmpty()) {
+
+                            howManyFilesWereAlreadyUploadedRecFromFUS = 0;
 
                             boolean areThereAnyFilesToUpload = false;
                             for (String folderEntity : allSavedDFPaths) {
@@ -175,8 +175,10 @@ public class FileUploadService extends Service {
                                                 sardine.put(driveURL + "/" + folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
                                                 System.out.println(file.getName() + " - has been uploaded.");
                                                 howManyNewFilesWereUploadedNow.getAndIncrement();
+                                                howManyFilesWereAlreadyUploadedRecFromFUS++;
                                             } else {
                                                 System.out.println(file.getName() + " - skipping duplicate");
+                                                howManyFilesWereAlreadyUploadedRecFromFUS++;
                                             }
                                         } catch (IOException e) {
                                             if (blockedNetworkRelatedQueue.isEmpty()) {
@@ -198,6 +200,7 @@ public class FileUploadService extends Service {
                         int howManyFilesWereEverUploaded = totalPathsCounter.getInt("totalFilesDownloaded", 0);
                         totalPathsCounter.edit().putInt("totalFilesDownloaded", howManyFilesWereEverUploaded + howManyNewFilesWereUploadedNow.get()).apply();
 
+                        howManyFilesWereAlreadyUploadedRecFromFUS = 0;
                         //if all the files were successfully uploaded, we don't this variable to contain
                         //counter related to them
                         howManyNewFilesWereUploadedNow.set(0);
@@ -207,7 +210,12 @@ public class FileUploadService extends Service {
                         blockedFilesRelatedQueue.add("no on-device directories were chosen to work with");
                         notifierService.onNotify(getApplicationContext());
                     }
+                    Calendar now = Calendar.getInstance();
+                    String theTimeTheUploadSucceeded = String.format("%02d.%02d.%02d, %02d:%02d",
+                            now.get(Calendar.DATE), now.get(Calendar.MONTH) + 1, now.get(Calendar.YEAR),
+                            now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
 
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("theLastSuccessfullSyncMoment", theTimeTheUploadSucceeded).apply();
                 } else {
                     if (blockedNetworkRelatedQueue.isEmpty()) {
                         blockedNetworkRelatedQueue.add("some user data is not provided");
@@ -218,28 +226,14 @@ public class FileUploadService extends Service {
 
                 syncTogglerButton[0] = false;
 
-                Calendar now = Calendar.getInstance();
-                String theTimeTheUploadSucceeded = String.format("%02d.%02d.%02d, %02d:%02d",
-                        now.get(Calendar.DATE), now.get(Calendar.MONTH) + 1, now.get(Calendar.YEAR),
-                        now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
-
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("theLastSuccessfullSyncMoment", theTimeTheUploadSucceeded).apply();
-
-                stopForeground(true);
-                stopSelfResult(startId);
             };
             new Thread(thread).start();
 
+            stopForeground(true);
+            stopSelfResult(startId);
+
         } else if (Objects.equals(intent.getAction(), "serviceFileUploaderStop")) {
             Log.i("ServiceRuntimeInfo", "Received toStop Foreground Intent");
-
-            //Everything below can be deleted?
-            Calendar now = Calendar.getInstance();
-            String theTimeTheUploadSucceeded = String.format("%02d.%02d.%02d, %02d:%02d",
-                    now.get(Calendar.DATE), now.get(Calendar.MONTH) + 1, now.get(Calendar.YEAR),
-                    now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
-
-            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("theLastSuccessfullSyncMoment", theTimeTheUploadSucceeded).apply();
 
             syncTogglerButton[0] = false;
 

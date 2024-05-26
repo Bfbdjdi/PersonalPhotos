@@ -35,14 +35,13 @@ public class SyncFragment extends Fragment {
             TextView previousSyncMomentTV = rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
             TextView totalFilesSavedTV = rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
 
-            String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "last sync moment not avail");
+            String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "(пока синхронизаций не было)");
             SharedPreferences totalPathsCounterSP = requireContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
             Integer totalPathsCounter = totalPathsCounterSP.getInt("totalFilesDownloaded", -0);
 
+            totalFilesSavedTV.setText(totalPathsCounter.toString());
             previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
-            if (totalPathsCounter != 0) {
-                totalFilesSavedTV.setText(totalPathsCounter.toString());
-            }
+
             if (!syncTogglerButton[0]) {
                 togglerSyncButtonTV.setText("Начать синхронизацию");
             }
@@ -81,10 +80,8 @@ public class SyncFragment extends Fragment {
 
     void updateTextViews() {
 
-        TextView previousSyncMomentTV = (TextView) rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
-        //TextView totalFilesSavedTV = (TextView) rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
-        TextView driveURLTV = (TextView) rootViewThisLocal.findViewById(R.id.driveURLTV);
-        Button togglerSyncButtonTV = (Button) rootViewThisLocal.findViewById(R.id.togglerSyncButton);
+        TextView driveURLTV = rootViewThisLocal.findViewById(R.id.driveURLTV);
+        Button togglerSyncButtonTV = rootViewThisLocal.findViewById(R.id.togglerSyncButton);
 
         if (syncTogglerButton[0]) {
             togglerSyncButtonTV.setText("Отменить синхронизацию...");
@@ -98,7 +95,6 @@ public class SyncFragment extends Fragment {
 
         if ((!driveURL.equals("driveURL not avail")) && (!theTimeTheUploadSucceeded.equals("last sync moment not avail"))) {
             driveURLTV.setText(String.format("%s/%s", driveURL, folderNameUploadIn));
-            previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
         }
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());

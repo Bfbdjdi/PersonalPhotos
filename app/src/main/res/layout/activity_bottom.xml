@@ -26,7 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-
         app:itemIconTint="@color/black"
 
         app:itemTextColor="@color/black"
@@ -43,7 +42,6 @@
         android:layout_marginStart="15dp"
         android:layout_marginBottom="15dp"
 
-        android:contentDescription="TODO"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_action_settings" />
