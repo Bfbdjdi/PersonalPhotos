@@ -22,7 +22,7 @@ import androidx.preference.PreferenceManager;
 import com.anggrayudi.storage.file.DocumentFileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.thegrizzlylabs.sardineandroid.DavResource;
+
 import com.thegrizzlylabs.sardineandroid.Sardine;
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine;
 
@@ -33,7 +33,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.List;
+
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -63,6 +63,7 @@ public class FileUploadService extends Service {
 
         if (Objects.equals(intent.getAction(), "serviceFileUploaderStart")) {
             Log.i("ServiceRuntimeInfo", "Received toStart Foreground Intent");
+
             String login = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("userWEBDAVLogin", "login not avail");
             String password = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("userWEBDAVPassword", "password not avail");
             String driveURL = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("driveURL", "driveURL not avail");
@@ -96,8 +97,7 @@ public class FileUploadService extends Service {
                             blockedExceptionReasonQueue.add(e.getMessage());
                             notifierService.onNotify(getApplicationContext());
                         }
-                        System.out.println("failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?");
-                        System.out.println("Exception has occured: \n" + e.getMessage());
+                        Log.e("WEBDAVerror", "failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?\nException has occurred: \n" + e.getMessage());
                         return;
                     }
 
@@ -113,18 +113,20 @@ public class FileUploadService extends Service {
                     //Getting Uri's and adding them into HashSet
                     HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
 
-                    //Listing every file name that exists in the cloud folder
-                    List<DavResource> checkIfEverythingSetupCorrectly = null;
+                    boolean connectedOK = false;
+
+                    //Checking whether a connection to the WEBDAV is established
                     try {
-                        checkIfEverythingSetupCorrectly = sardine.list(driveURL + "/" + folderNameUploadIn);
+                        sardine.list(driveURL + "/" + folderNameUploadIn);
+                        connectedOK = true;
                     } catch (IOException e) {
-                        System.out.println("failed listing files in the WEBDAV");
+                        Log.e("WEBDAVerror", "failed listing files in the WEBDAV");
                         blockedNetworkRelatedQueue.add("failed listing files in the WEBDAV");
                         notifierService.onNotify(getApplicationContext());
                     }
 
                     //If the cloud folder is not empty, uploading only non-uploaded files:
-                    if (allSavedDFPaths != null) {
+                    if ((allSavedDFPaths != null) && (connectedOK)) {
 
                         int howManyFilesToUpload = 0;
                         //Counting all the files to upload. As we need to know the exact number of all
@@ -161,23 +163,24 @@ public class FileUploadService extends Service {
                                 for (DocumentFile file : directoryTreeOfFiles.listFiles()) {
 
                                     if (!isServiceToRun) {
-                                        System.out.println("Stopping service after the user's command");
+                                        Log.i("WEBDAVinfo", "Stopping service after the user's command");
                                         break;
                                     }
 
                                     areThereAnyFilesToUpload = true;
 
                                     if (file.isFile()) {
-                                        System.out.println(file.getName());
                                         try {
                                             if (!sardine.exists(driveURL + "/" + folderNameUploadIn + "/" + file.getName())) {
                                                 InputStream fis = DocumentFileUtils.openInputStream(file, this);
                                                 sardine.put(driveURL + "/" + folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
-                                                System.out.println(file.getName() + " - has been uploaded.");
+                                                Log.i("WEBDAVupload", file.getName() + " - has been uploaded.");
+
                                                 howManyNewFilesWereUploadedNow.getAndIncrement();
                                                 howManyFilesWereAlreadyUploadedRecFromFUS++;
                                             } else {
-                                                System.out.println(file.getName() + " - skipping duplicate");
+                                                Log.i("WEBDAVupload", file.getName() + " - skipping duplicate");
+
                                                 howManyFilesWereAlreadyUploadedRecFromFUS++;
                                             }
                                         } catch (IOException e) {
@@ -185,16 +188,24 @@ public class FileUploadService extends Service {
                                                 blockedNetworkRelatedQueue.add("failed to upload a file to the WEBDAV");
                                                 notifierService.onNotify(getApplicationContext());
                                             }
-                                            System.out.println("failed to upload a file to the WEBDAV");
+                                            Log.e("WEBDAVerror", "failed to upload a file to the WEBDAV");
                                         }
                                     }
                                 }
                             }
                             if (!areThereAnyFilesToUpload) {
-                                System.out.println("literally no files to upload");
+                                Log.i("WEBDAVupload", "literally no files to upload");
+
                                 blockedFilesRelatedQueue.add("literally no files to upload");
                                 notifierService.onNotify(getApplicationContext());
                             }
+                        }
+                        else
+                        {
+                            Log.i("WEBDAVupload", "literally no files to upload");
+
+                            blockedFilesRelatedQueue.add("literally no files to upload");
+                            notifierService.onNotify(getApplicationContext());
                         }
                         SharedPreferences totalPathsCounter = getApplicationContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
                         int howManyFilesWereEverUploaded = totalPathsCounter.getInt("totalFilesDownloaded", 0);
@@ -206,7 +217,8 @@ public class FileUploadService extends Service {
                         howManyNewFilesWereUploadedNow.set(0);
 
                     } else {
-                        System.out.println("no on-device directories were chosen to work with");
+                        Log.i("WEBDAVupload", "no on-device directories were chosen to work with");
+
                         blockedFilesRelatedQueue.add("no on-device directories were chosen to work with");
                         notifierService.onNotify(getApplicationContext());
                     }

@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             userAuthThread.start();
 
             if (this.getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Подключение...");
+                getSupportActionBar().setTitle(R.string.connectingToAuthServer);
             }
             try {
                 userAuthThread.join();
@@ -86,20 +86,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().setTitle("PersonalPhotos");
                         }
-                        Toast.makeText(this, "Неверные логин и/или пароль.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.incorrectAuthServerLoginOrPassword, Toast.LENGTH_LONG).show();
                         break;
                     case "not connected to auth-server":
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().setTitle("PersonalPhotos");
                         }
-                        Toast.makeText(this, "Нет связи с сервером авторизации.", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(this, "Проверьте сетевые настройки устройства.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.notConnectedToAuthServer, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.askUserToCheckInternet, Toast.LENGTH_SHORT).show();
                         break;
                     case "was connected, but then was suddenly disconnected":
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().setTitle("PersonalPhotos");
                         }
-                        Toast.makeText(this, "Сервер разорвал соединение.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.authServerDisconnected, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }

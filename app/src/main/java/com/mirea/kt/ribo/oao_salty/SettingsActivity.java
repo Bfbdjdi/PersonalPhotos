@@ -65,7 +65,6 @@ public class SettingsActivity extends AppCompatActivity {
             ArrayList<String> wrongInputList = new ArrayList<>();
 
             for (Map.Entry<String, String> entry : variablesList.entrySet()) {
-                System.out.println(entry);
 
                 boolean isItFolderName = false;
 
@@ -150,16 +149,16 @@ public class SettingsActivity extends AppCompatActivity {
                     for (String element : wrongInputList) {
                         switch (element) {
                             case "userWEBDAVLogin":
-                                Toast.makeText(requireContext(), "Логин содержит не те символы", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.loginContainsProhibitedSymbols, Toast.LENGTH_SHORT).show();
                                 break;
                             case "userWEBDAVPassword":
-                                Toast.makeText(requireContext(), "Пароль содержит не те символы", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.passwordContainsProhibitedSymbols, Toast.LENGTH_SHORT).show();
                                 break;
                             case "driveURL":
-                                Toast.makeText(requireContext(), "Адрес содержит не те символы", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.driveURLContainsProhibitedSymbols, Toast.LENGTH_SHORT).show();
                                 break;
                             case "folderNameUploadIn":
-                                Toast.makeText(requireContext(), "Название папки содержит не те символы", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(),  R.string.uploadFolderNameContainsProhibitedSymbols, Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     }

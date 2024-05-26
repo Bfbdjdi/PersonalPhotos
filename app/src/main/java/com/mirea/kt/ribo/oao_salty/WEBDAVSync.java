@@ -3,6 +3,7 @@ package com.mirea.kt.ribo.oao_salty;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -16,18 +17,11 @@ import java.util.Objects;
 
 public class WEBDAVSync extends ContextWrapper {
 
-    private String login = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("userWEBDAVLogin", "login not avail");
-    private String password = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("userWEBDAVPassword", "password not avail");
-
-    private String driveURL = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("driveURL", "driveURL not avail");
-
-    private String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
-
     public WEBDAVSync(Context contexter) {
         super(contexter);
     }
 
-    public void syncListWebdav() {
+    /*public void syncListWebdav() {
 
         final Runnable thread = () -> {
             Sardine sardine = new OkHttpSardine();
@@ -45,7 +39,7 @@ public class WEBDAVSync extends ContextWrapper {
             }
         };
         new Thread(thread).start();
-    }
+    }*/
 
     public void foldersPathsObtainer() {
         Intent folderPickerStart = new Intent(getApplicationContext(), FolderPicker.class);
@@ -58,13 +52,15 @@ public class WEBDAVSync extends ContextWrapper {
         Intent serviceTogglerIntent = new Intent(this, FileUploadService.class);
         if (Objects.equals(action, "startServiceFileUploader")) {
             serviceTogglerIntent.setAction("serviceFileUploaderStart");
-            System.out.println(action);
+
+            Log.i("WEBDAVservice", action);
             isServiceToRun = true;
             this.startService(serviceTogglerIntent);
         }
         if (Objects.equals(action, "stopServiceFileUploader")) {
             serviceTogglerIntent.setAction("serviceFileUploaderStop");
-            System.out.println(action);
+
+            Log.i("WEBDAVservice", action);
             isServiceToRun = false;
             this.startService(serviceTogglerIntent);
         }

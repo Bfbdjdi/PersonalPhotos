@@ -32,21 +32,21 @@ public class EventsNotifierService extends Service {
             if (errorNetworkingMessage != null) {
                 switch (Objects.requireNonNull(errorNetworkingMessage)) {
                     case "failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?":
-                        Toast.makeText(contexter, "Не создал папку для сохранения в облаке.", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(contexter, "Адрес сервера, данные аккаунта верно указаны?", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(contexter, "Интернет на устройстве работает?", Toast.LENGTH_LONG).show();
+                        Toast.makeText(contexter, R.string.failedCreatingRequiredFolder1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.failedCreatingRequiredFolder2, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.failedCreatingRequiredFolder3, Toast.LENGTH_LONG).show();
                         break;
                     case "failed listing files in the WEBDAV":
-                        Toast.makeText(contexter, "Не узнал о файлах в папке PP облака.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.failedListingFilesInTheWEBDAV, Toast.LENGTH_SHORT).show();
                         break;
                     case "failed to upload a file to the WEBDAV":
-                        Toast.makeText(contexter, "Не смог загрузить файл в облако.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.failedUploadFileToTheWEBDAV, Toast.LENGTH_SHORT).show();
                         break;
                     case "was connected, but then was suddenly disconnected":
-                        Toast.makeText(contexter, "Связь с сервером WEBDAV потеряна.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.lostConnectionWEBDAV, Toast.LENGTH_SHORT).show();
                         break;
                     case "some user data is not provided":
-                        Toast.makeText(contexter, "Указаны не все требуемые данные для работы с WEBDAV.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.someWEBDAVUserDataNotProvided, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -54,13 +54,13 @@ public class EventsNotifierService extends Service {
             if (errorFileMessage != null) {
                 switch (Objects.requireNonNull(errorFileMessage)) {
                     case "no directories were chosen in the device's memory by the user":
-                        Toast.makeText(contexter, "Отмена выбора папки.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.cancelledFolderPicker, Toast.LENGTH_SHORT).show();
                         break;
                     case "no on-device directories were chosen to work with":
-                        Toast.makeText(contexter, "Для синхронизации выберите папки с файлами на устройстве.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.noDirsOnDeviceAreChosen, Toast.LENGTH_SHORT).show();
                         break;
                     case "literally no files to upload":
-                        Toast.makeText(contexter, "Буквально нет файлов для синхронизации.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexter, R.string.nothingToUpload, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }

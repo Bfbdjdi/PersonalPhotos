@@ -43,7 +43,7 @@ public class SyncFragment extends Fragment {
             previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
 
             if (!syncTogglerButton[0]) {
-                togglerSyncButtonTV.setText("Начать синхронизацию");
+                togglerSyncButtonTV.setText(R.string.performSync);
             }
 
             mHandler.post(syncCheckerTask);
@@ -84,9 +84,9 @@ public class SyncFragment extends Fragment {
         Button togglerSyncButtonTV = rootViewThisLocal.findViewById(R.id.togglerSyncButton);
 
         if (syncTogglerButton[0]) {
-            togglerSyncButtonTV.setText("Отменить синхронизацию...");
+            togglerSyncButtonTV.setText(R.string.stopSync);
         } else {
-            togglerSyncButtonTV.setText("Начать синхронизацию");
+            togglerSyncButtonTV.setText(R.string.performSync);
         }
 
         String driveURL = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("driveURL", "driveURL not avail");
@@ -106,10 +106,10 @@ public class SyncFragment extends Fragment {
 
             if (syncTogglerButton[0]) {
                 serviceControllerCommand = "startServiceFileUploader";
-                togglerSyncButtonTV.setText("Отменить синхронизацию...");
+                togglerSyncButtonTV.setText(R.string.stopSync);
             } else {
                 serviceControllerCommand = "stopServiceFileUploader";
-                togglerSyncButtonTV.setText("Начать синхронизацию");
+                togglerSyncButtonTV.setText(R.string.performSync);
             }
 
             WEBDAVUtil.fileUploader(serviceControllerCommand);

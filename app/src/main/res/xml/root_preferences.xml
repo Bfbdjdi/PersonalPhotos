@@ -1,39 +1,39 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Настройки подключения по WEBDAV">
+    <PreferenceCategory app:title="@string/webdavSettingsSubMenuTitle">
         <EditTextPreference
             app:key="driveURL"
-            app:title="Адрес сервера"
+            app:title="@string/driveURLPrefTitle"
             app:useSimpleSummaryProvider="false"
-            app:summary="Например, \n'https://webdav.yandex.ru/'" />
+            app:summary="@string/driveURLPrefHint" />
 
         <EditTextPreference
             app:key="folderNameUploadIn"
             app:defaultValue="PersonalPhotos"
             app:singleLineTitle="false"
-            app:dialogTitle="Название папки на сервере"
-            app:title="Название папки на сервере, которая будет использоваться для сохранения загружаемых файлов"
+            app:dialogTitle="@string/howFolderShouldBeNamedOnWEBDAVPrefLong"
+            app:title="@string/howFolderShouldBeNamedOnWEBDAVPrefShort"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:dialogTitle="Логин учётной записи"
+            app:dialogTitle="@string/WEBDAVloginPrefTitle"
             app:key="userWEBDAVLogin"
-            app:title="Логин учётной записи"
-            app:summary="Например, Ваша почта или адрес сети сервера" />
+            app:title="@string/WEBDAVloginPref"
+            app:summary="@string/WEBDAVloginPrefHint" />
 
         <EditTextPreference
             app:key="userWEBDAVPassword"
             app:singleLineTitle="false"
-            app:summary="Учтите: в случае с Яндексом, например, нужно создать отдельный пароль сугубо для подключения по WEBDAV"
-            app:title="Пароль учётной записи"
+            app:summary="@string/userWEBDAVPasswordPrefSummary"
+            app:title="@string/userWEBDAVPasswordPrefTitle"
             app:enableCopying="false" />
 
-        <PreferenceCategory app:title="Дополнительно">
+        <PreferenceCategory app:title="@string/miscellaneousSubMenuTitle">
 
             <SwitchPreferenceCompat
                 app:key="autoPasteLogin"
                 app:singleLineTitle="false"
-                app:title="Автозаполнение логина и пароля на экране входа"
+                app:title="@string/autoFillAuthLoginPasswordPrefTitle"
                 app:defaultValue="true" />
 
         </PreferenceCategory>
@@ -41,9 +41,9 @@
     </PreferenceCategory>
 
     <Preference
-        app:title="Удалить все данные из приложения"
+        app:title="@string/clearAllDataPrefTitle"
         app:key="deletePreferences"
         app:icon="@drawable/icon_trash"
-        app:summary="Файлы на сервере тронуты не будут" />
+        app:summary="@string/clearAllDataPrefHint" />
 
 </PreferenceScreen>

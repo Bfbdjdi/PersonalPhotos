@@ -49,7 +49,7 @@
         android:background="@drawable/circular_edit_text"
 
         android:ems="10"
-        android:hint="Логин"
+        android:hint="@string/userAuthLogin"
         android:inputType="text"
         android:maxLength="15"
 
@@ -79,7 +79,7 @@
 
         android:ems="10"
 
-        android:hint="Пароль"
+        android:hint="@string/userAuthPassword"
         android:inputType="textPassword"
 
         android:maxLength="20"
@@ -100,7 +100,7 @@
         android:layout_width="140dp"
         android:layout_height="55dp"
 
-        android:text="Войти"
+        android:text="@string/authUser"
         android:textSize="20sp"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -115,7 +115,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="\@ОАО 'Salty', верховный разработчик:\nГеоргий Белин, РИБО-01-22"
+        android:text="@string/developerInfo"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

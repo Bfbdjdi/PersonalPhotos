@@ -36,13 +36,12 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
 
         private final TextView upperLineText;
         private final TextView lowerLineText;
-        private final ImageButton deleteButton;
 
         ViewHolder(View view) {
             super(view);
             upperLineText = view.findViewById(R.id.shortFilePath);
             lowerLineText = view.findViewById(R.id.fullFilePath);
-            deleteButton = view.findViewById(R.id.delete_button);
+            ImageButton deleteButton = view.findViewById(R.id.delete_button);
             deleteButton.setOnClickListener(v -> {
                 Integer position = getAdapterPosition();
                 pathsFromSPRemover(view, (int) position);

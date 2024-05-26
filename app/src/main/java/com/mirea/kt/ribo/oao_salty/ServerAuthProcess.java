@@ -81,7 +81,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
         userCredentialsMap.put("pwd", userPassword);
         userCredentialsMap.put("g", "RIBO-01-22");
 
-        String responseBody = "";
+        String responseBody;
 
         try {
             URL url = new URL(serverAddress);
@@ -103,7 +103,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
                 while ((currentLine = br.readLine()) != null) sbResponse.append(currentLine);
 
                 responseBody = sbResponse.toString();
-                Log.d("rec_tag", responseBody);
+                Log.d("AuthProcess", responseBody);
 
                 JSONObject jSONObject = new JSONObject(responseBody);
                 int result = jSONObject.getInt("result_code");
@@ -128,7 +128,8 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
         } catch (MalformedURLException | JSONException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            System.out.println("No internet connectivity. Unable to auth the user.");
+            Log.e("AuthProcess", "No internet connectivity. Unable to auth the user.");
+
             if (blockedQueue.isEmpty()) {
                 blockedQueue.add("not connected to auth-server");
             }
