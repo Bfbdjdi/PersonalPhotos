@@ -1,7 +1,12 @@
 package com.mirea.kt.ribo.oao_salty;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +15,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
@@ -28,6 +38,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, "filesBackgroundUploadStarter")
+                .setShortLabel(getString(R.string.SyncFilesShortShortcut))
+                .setLongLabel(getString(R.string.SyncFilesLongShortcut))
+                .setIcon(IconCompat.createWithResource(this, R.drawable.ic_launcher_background))
+                .setIntent(new Intent(Intent.ACTION_MAIN, Uri.EMPTY, this, OnHomeScreenShortcut.class))
+                .build();
+
+        ShortcutManagerCompat.pushDynamicShortcut(this, shortcut);
+
+        if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, 1);
+            }
+        }
 
         authButton = findViewById(R.id.loginButton);
         loginInputField = findViewById(R.id.loginInput);

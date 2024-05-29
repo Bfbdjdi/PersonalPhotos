@@ -5,7 +5,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="READ_EXTERNAL_STORAGE"
-        tools:remove="android:maxSdkVersion" />
+        tools:remove="android:maxSdkVersion"
+        />
+    <uses-permission
+        android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
@@ -42,6 +46,11 @@
             android:name=".BottomActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".OnHomeScreenShortcut"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoDisplay"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

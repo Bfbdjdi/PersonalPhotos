@@ -24,6 +24,7 @@ public class EventsNotifierService extends Service {
     }
 
     public void onNotify(Context contexter) {
+
         new Handler(Looper.getMainLooper()).post(() -> {
 
             String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();

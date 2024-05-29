@@ -67,4 +67,8 @@
     <string name="autoFillAuthLoginPasswordPrefTitle">Автозаполнение логина и пароля на экране входа</string>
     <string name="clearAllDataPrefTitle">Удалить все данные из приложения</string>
     <string name="clearAllDataPrefHint">Файлы на сервере тронуты не будут</string>
+    <string name="SyncFilesShortShortcut">Выгрузить</string>
+    <string name="SyncFilesLongShortcut">Выгрузить файлы</string>
+    <string name="shortcutBackgroundDownloadStart">Запуск выгрузки...</string>
+    <string name="shortcutNoAuthWarning">Сначала авторизуйтесь в приложении.</string>
 </resources>

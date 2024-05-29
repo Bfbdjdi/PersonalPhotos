@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import static com.mirea.kt.ribo.oao_salty.WEBDAVSync.isServiceToRun;
 
 public class SyncFragment extends Fragment {
     public SyncFragment() {
@@ -42,7 +43,11 @@ public class SyncFragment extends Fragment {
             totalFilesSavedTV.setText(totalPathsCounter.toString());
             previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
 
-            if (!syncTogglerButton[0]) {
+            if ((isServiceToRun != null) && (isServiceToRun)){
+                togglerSyncButtonTV.setText(R.string.stopSync);
+                syncTogglerButton[0] = true;
+            }
+            else if (!syncTogglerButton[0]) {
                 togglerSyncButtonTV.setText(R.string.performSync);
             }
 
