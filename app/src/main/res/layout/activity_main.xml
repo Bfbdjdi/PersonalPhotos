@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="220dp"
+        android:layout_height="180dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
         app:layout_constraintBottom_toTopOf="@+id/loginInput"
@@ -33,7 +33,7 @@
 
 
         app:layout_constraintTop_toBottomOf="@+id/loginToolbar"
-        app:srcCompat="@drawable/icloud" />
+        app:srcCompat="@drawable/login_cloud_pict" />
 
     <EditText
         android:id="@+id/loginInput"

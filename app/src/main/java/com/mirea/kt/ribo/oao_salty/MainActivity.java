@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, "filesBackgroundUploadStarter")
                 .setShortLabel(getString(R.string.SyncFilesShortShortcut))
                 .setLongLabel(getString(R.string.SyncFilesLongShortcut))
-                .setIcon(IconCompat.createWithResource(this, R.drawable.ic_launcher_background))
+                .setIcon(IconCompat.createWithResource(this, R.mipmap.upload_shortcut_icon))
                 .setIntent(new Intent(Intent.ACTION_MAIN, Uri.EMPTY, this, OnHomeScreenShortcut.class))
                 .build();
 

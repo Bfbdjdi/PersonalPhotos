@@ -5,12 +5,14 @@
             app:key="driveURL"
             app:title="@string/driveURLPrefTitle"
             app:useSimpleSummaryProvider="false"
+            app:icon="@drawable/ic_action_storage"
             app:summary="@string/driveURLPrefHint" />
 
         <EditTextPreference
             app:key="folderNameUploadIn"
             app:defaultValue="PersonalPhotos"
             app:singleLineTitle="false"
+            app:icon="@drawable/ic_action_folder"
             app:dialogTitle="@string/howFolderShouldBeNamedOnWEBDAVPrefLong"
             app:title="@string/howFolderShouldBeNamedOnWEBDAVPrefShort"
             app:useSimpleSummaryProvider="true" />
@@ -19,6 +21,7 @@
             app:dialogTitle="@string/WEBDAVloginPrefTitle"
             app:key="userWEBDAVLogin"
             app:title="@string/WEBDAVloginPref"
+            app:icon="@drawable/ic_action_person"
             app:summary="@string/WEBDAVloginPrefHint" />
 
         <EditTextPreference
@@ -26,6 +29,7 @@
             app:singleLineTitle="false"
             app:summary="@string/userWEBDAVPasswordPrefSummary"
             app:title="@string/userWEBDAVPasswordPrefTitle"
+            app:icon="@drawable/ic_action_vpn_key"
             app:enableCopying="false" />
 
         <PreferenceCategory app:title="@string/miscellaneousSubMenuTitle">
@@ -33,7 +37,9 @@
             <SwitchPreferenceCompat
                 app:key="autoPasteLogin"
                 app:singleLineTitle="false"
+                app:icon="@drawable/ic_action_login"
                 app:title="@string/autoFillAuthLoginPasswordPrefTitle"
+
                 app:defaultValue="true" />
 
         </PreferenceCategory>
@@ -43,7 +49,8 @@
     <Preference
         app:title="@string/clearAllDataPrefTitle"
         app:key="deletePreferences"
-        app:icon="@drawable/icon_trash"
+        app:icon="@drawable/ic_action_logout"
+        app:iconSpaceReserved="true"
         app:summary="@string/clearAllDataPrefHint" />
 
 </PreferenceScreen>
