@@ -39,9 +39,16 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
 
         ViewHolder(View view) {
             super(view);
+
+            //getting TextView with short paths
             upperLineText = view.findViewById(R.id.shortFilePath);
+
+            //getting TextView with long paths
             lowerLineText = view.findViewById(R.id.fullFilePath);
+
             ImageButton deleteButton = view.findViewById(R.id.delete_button);
+
+            //listening for "element delete" button press
             deleteButton.setOnClickListener(v -> {
                 Integer position = getAdapterPosition();
                 pathsFromSPRemover(view, (int) position);
@@ -49,6 +56,7 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
         }
     }
 
+    //the method that is used to remove elements from the paths list
     public void pathsFromSPRemover(View view, int position) {
 
         //Retrieving Uri's from SharedPrefs
@@ -64,8 +72,13 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
         Set<String> allSavedPathsDatasPaths = gson.fromJson(encodedStringedPaths, convertType);
         Set<String> allSavedPathsDatasPathsModified = new HashSet<>();
 
+        //iterating through PathsData in SharedPrefs
         for (String entry : allSavedPathsDatasPaths) {
             try {
+
+                //if the iterator is not the path to be deleted, we save the iter in another Set and in SharedPrefs.
+                //The path that is to be deleted from the list will not be added to the second Set and,
+                //consequently, saved
                 if (!URLDecoder.decode(entry, "UTF-8").contains(pathsContainer.get(position).getShortPath())) {
                     allSavedPathsDatasPathsModified.add(entry);
                 }
@@ -74,9 +87,11 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
             }
         }
 
+        //Saving the new Set with every but one path
         String dataWrappedInString = gson.toJson(allSavedPathsDatasPathsModified);
         sharedPaths.edit().putString("listOfPaths", dataWrappedInString).apply();
 
+        //Calling the method to update the list of paths in the FoldersFragment
         ((FoldersFragment) fragment).adapterFilePathsUpdater();
     }
 

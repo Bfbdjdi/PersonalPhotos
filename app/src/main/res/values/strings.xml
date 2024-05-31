@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">PersonalPhotos</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="folders_fragment_title">Folders</string>
     <string name="sync_fragment_title">Sync</string>
     <string name="settings_fragment_title">Settings</string>
@@ -9,19 +8,9 @@
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_settings2">SettingsActivity2</string>
-    <string name="myCoolButton">dfg</string>
+
     <string name="failedCreatingRequiredFolder1">Не создал папку для сохранения в облаке.</string>
     <string name="failedCreatingRequiredFolder2">Адрес сервера, данные аккаунта верно указаны?</string>
     <string name="failedCreatingRequiredFolder3">Интернет на устройстве работает?</string>
@@ -71,4 +60,5 @@
     <string name="SyncFilesLongShortcut">Выгрузить файлы</string>
     <string name="shortcutBackgroundDownloadStart">Запуск выгрузки...</string>
     <string name="shortcutNoAuthWarning">Сначала авторизуйтесь в приложении.</string>
+    <string name="toolbarAlreadyUploadedTitle">"Выгружено: "</string>
 </resources>

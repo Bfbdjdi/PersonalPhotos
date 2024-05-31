@@ -31,6 +31,7 @@ public class FoldersFragment extends Fragment {
         // Required empty public constructor
     }
 
+    //Building Longpaths and Shortpaths to display them in the adapter
     public HashMap<String, String> pathsLabelBuilder() {
         HashMap<String, String> pathsBothLongShort = new HashMap<>();
 
@@ -43,12 +44,18 @@ public class FoldersFragment extends Fragment {
         Gson gson = new Gson();
         Type convertType = new TypeToken<HashSet<String>>() {}.getType();
 
-        //Getting Uri's and adding them into HashSet
+        //Getting Uri's and adding them into a HashSet
         HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
+
+        //If there are any paths to actually display
         if (allSavedDFPaths != null) {
+
+            //Iterating through the Set
             for (String entry : allSavedDFPaths) {
                 String shortPathFromSP;
                 String longPathFromSP;
+
+                //Building Long and Short paths
                 try {
                     if (entry.contains("%2F")) {
                         shortPathFromSP = URLDecoder.decode(entry, "UTF-8").substring(entry.lastIndexOf("%2F") - 1);
@@ -66,16 +73,21 @@ public class FoldersFragment extends Fragment {
                     throw new RuntimeException(e);
                 }
 
+                //Storing the result
                 pathsBothLongShort.put(longPathFromSP, shortPathFromSP);
             }
         }
         return pathsBothLongShort;
     }
 
+    //Updating the RecyclerView
     public void adapterFilePathsUpdater() {
         HashMap<String, String> listOfFilesPathsToShow;
+
+        //Building Long and Short paths
         listOfFilesPathsToShow = pathsLabelBuilder();
 
+        //Converting the Set to FilePathsToInflate-objects
         ArrayList<FilePathsToInflate> arrayOfPaths = new ArrayList<>();
 
         for (Map.Entry<String, String> set : listOfFilesPathsToShow.entrySet()) {
@@ -110,10 +122,10 @@ public class FoldersFragment extends Fragment {
 
         rootViewThisLocal = inflater.inflate(R.layout.fragment_folders, container, false);
 
-        adapterFilePathsUpdater();
-
+        //This object is to be able to use different useful WEBDAV-methods
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
 
+        //Listening for a ChooseFolders-button press
         Button addPathsButton = rootViewThisLocal.findViewById(R.id.addPathsButton);
         addPathsButton.setOnClickListener(item ->
         {

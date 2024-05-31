@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedNetworkRelatedQueue;
 import static com.mirea.kt.ribo.oao_salty.BottomActivity.blockedFilesRelatedQueue;
+import static com.mirea.kt.ribo.oao_salty.SyncFragment.syncTogglerButton;
+import static com.mirea.kt.ribo.oao_salty.WEBDAVSync.isServiceToRun;
 
 import java.util.Objects;
 
@@ -25,12 +27,15 @@ public class EventsNotifierService extends Service {
 
     public void onNotify(Context contexter) {
 
-        new Handler(Looper.getMainLooper()).post(() -> {
+        //Getting all the errors occurred previously
+        String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();
+        String errorFileMessage = blockedFilesRelatedQueue.poll();
 
-            String errorNetworkingMessage = blockedNetworkRelatedQueue.poll();
-            String errorFileMessage = blockedFilesRelatedQueue.poll();
+        //Network-related problems
+        if (errorNetworkingMessage != null) {
 
-            if (errorNetworkingMessage != null) {
+            //Switching inside main thread to be able to toast
+            new Handler(Looper.getMainLooper()).post(() -> {
                 switch (Objects.requireNonNull(errorNetworkingMessage)) {
                     case "failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?":
                         Toast.makeText(contexter, R.string.failedCreatingRequiredFolder1, Toast.LENGTH_SHORT).show();
@@ -50,9 +55,17 @@ public class EventsNotifierService extends Service {
                         Toast.makeText(contexter, R.string.someWEBDAVUserDataNotProvided, Toast.LENGTH_SHORT).show();
                         break;
                 }
-            }
+            });
 
-            if (errorFileMessage != null) {
+            //Changing SyncButton's title to "Sync"
+            isServiceToRun = false;
+            syncTogglerButton[0] = false;
+        }
+
+        //Files-related problems
+        if (errorFileMessage != null) {
+            //Switching inside main thread to be able to toast
+            new Handler(Looper.getMainLooper()).post(() -> {
                 switch (Objects.requireNonNull(errorFileMessage)) {
                     case "no directories were chosen in the device's memory by the user":
                         Toast.makeText(contexter, R.string.cancelledFolderPicker, Toast.LENGTH_SHORT).show();
@@ -64,8 +77,9 @@ public class EventsNotifierService extends Service {
                         Toast.makeText(contexter, R.string.nothingToUpload, Toast.LENGTH_SHORT).show();
                         break;
                 }
-            }
-        });
+            });
+            isServiceToRun = false;
+        }
     }
 
     @Override

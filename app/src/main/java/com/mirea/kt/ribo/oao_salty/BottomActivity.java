@@ -22,6 +22,7 @@ public class BottomActivity extends AppCompatActivity {
     public BottomActivity() {
     }
 
+    //Replacing fragments with each other when a user taps on BottomNav's buttons
     private void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
@@ -29,6 +30,8 @@ public class BottomActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    //Setting up the EventsNotifierService's variables, using which different classes can notify
+    //users about internal errors
     static ArrayBlockingQueue<String> blockedNetworkRelatedQueue = new ArrayBlockingQueue<>(1, true);
     static ArrayBlockingQueue<String> blockedFilesRelatedQueue = new ArrayBlockingQueue<>(1, true);
 
@@ -36,6 +39,10 @@ public class BottomActivity extends AppCompatActivity {
 
     static int howManyFilesWereAlreadyUploadedRecFromFUS = 0;
     static int howManyFilesToUploadRecFromFUS = 0;
+
+    //Async task constantly working (if home screen shortcut wasn't used by a user) in the background.
+    //It replaces ToolBar's title with a number of already uploaded files and vice versa
+    //(only when syncing files)
     private Handler mHandler = new Handler();
     private Runnable syncCheckerTask = new Runnable() {
         @Override
@@ -44,7 +51,7 @@ public class BottomActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
 
             if (howManyFilesWereAlreadyUploadedRecFromFUS != 0) {
-                toolbar.setTitle("Выгружено: " + howManyFilesWereAlreadyUploadedRecFromFUS + "/" + howManyFilesToUploadRecFromFUS);
+                toolbar.setTitle(getString(R.string.toolbarAlreadyUploadedTitle) + howManyFilesWereAlreadyUploadedRecFromFUS + "/" + howManyFilesToUploadRecFromFUS);
             }
             else
             {
@@ -73,6 +80,7 @@ public class BottomActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        //Starting the Notifier service
         Intent serviceTogglerIntent = new Intent(this, EventsNotifierService.class);
         this.startService(serviceTogglerIntent);
 
@@ -80,6 +88,9 @@ public class BottomActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
+        //If a user hasn't chosen any directories on his/her device yet, the FoldersFragment will
+        //appear the first after launching the app, in other cases the SyncFragment will be the first
+        //to be displayed
         if (this.getSharedPreferences("PathsData", MODE_PRIVATE)
                 .getString("listOfPaths", "[]").equals("[]"))
         {
@@ -92,6 +103,7 @@ public class BottomActivity extends AppCompatActivity {
             bottomNavigationView.setSelectedItemId(R.id.navigation_sync);
         }
 
+        //The button to start (open) the settings activity
         FloatingActionButton settingsButton = findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(item ->
         {
@@ -102,6 +114,7 @@ public class BottomActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
 
+        //Listening to on-BottomNav user's presses to switch fragments accordingly
         bottomNavigationView.setOnItemSelectedListener(item ->
         {
             switch (item.getItemId()) {

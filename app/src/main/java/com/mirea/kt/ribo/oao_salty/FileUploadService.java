@@ -56,7 +56,7 @@ public class FileUploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        //Counter of files that were successfully uploaded. The variable is created here
+        //Counter of files that were successfully uploaded. The variable is created exactly here
         //as to make it possible for the service to save the counter while going through
         //self-stop proccess
         AtomicInteger howManyNewFilesWereUploadedNow = new AtomicInteger();
@@ -71,6 +71,8 @@ public class FileUploadService extends Service {
 
             Runnable thread = () -> {
 
+                //If the user has entered any required credential incorrectly, this service will only notify
+                //the user about this problem and will not do any sync
                 if ((!driveURL.equals("driveURL not avail")) && (!login.equals("login not avail")) &&
                         (!password.equals("password not avail")) && (!folderNameUploadIn.equals("folderNameUploadIn not avail"))) {
 
@@ -83,7 +85,7 @@ public class FileUploadService extends Service {
                     Sardine sardine = new OkHttpSardine(okHttpClient);
                     sardine.setCredentials(login, password);
 
-                    //checking whether specific folder exists
+                    //checking whether a specific folder exists in the cloud drive
                     try {
                         if (!sardine.exists(driveURL + "/" + folderNameUploadIn)) {
                             sardine.createDirectory(driveURL + "/" + folderNameUploadIn);
@@ -93,7 +95,7 @@ public class FileUploadService extends Service {
                             blockedNetworkRelatedQueue.add("failed creating PersonalPhotos folder in the WEBDAV. Connectivity issue?");
                             notifierService.onNotify(getApplicationContext());
                         }
-                        if (blockedNetworkRelatedQueue.isEmpty()) {
+                        if (blockedExceptionReasonQueue.isEmpty()) {
                             blockedExceptionReasonQueue.add(e.getMessage());
                             notifierService.onNotify(getApplicationContext());
                         }
@@ -113,24 +115,12 @@ public class FileUploadService extends Service {
                     //Getting Uri's and adding them into HashSet
                     HashSet<String> allSavedDFPaths = gson.fromJson(encodedStringedPaths, convertType);
 
-                    boolean connectedOK = false;
-
-                    //Checking whether a connection to the WEBDAV is established
-                    try {
-                        sardine.list(driveURL + "/" + folderNameUploadIn);
-                        connectedOK = true;
-                    } catch (IOException e) {
-                        Log.e("WEBDAVerror", "failed listing files in the WEBDAV");
-                        blockedNetworkRelatedQueue.add("failed listing files in the WEBDAV");
-                        notifierService.onNotify(getApplicationContext());
-                    }
-
-                    //If the cloud folder is not empty, uploading only non-uploaded files:
-                    if ((allSavedDFPaths != null) && (connectedOK)) {
+                    //If the variable with paths is not null
+                    if (allSavedDFPaths != null) {
 
                         int howManyFilesToUpload = 0;
                         //Counting all the files to upload. As we need to know the exact number of all
-                        //files from every directory, we need to iterate through the latter in total twice
+                        //files from every directory, we need to iterate through the allSavedDFPaths one additional time
                         for (String folderEntity : allSavedDFPaths) {
 
                             //Getting DocumentFileTree
@@ -152,6 +142,8 @@ public class FileUploadService extends Service {
 
                             howManyFilesWereAlreadyUploadedRecFromFUS = 0;
 
+                            //If there is not a single file in total to upload from chosen folders,
+                            //we notify the user about this problem
                             boolean areThereAnyFilesToUpload = false;
                             for (String folderEntity : allSavedDFPaths) {
 
@@ -162,6 +154,7 @@ public class FileUploadService extends Service {
                                 //Uploading files (sometimes) one by one
                                 for (DocumentFile file : directoryTreeOfFiles.listFiles()) {
 
+                                    //If the user has pressed the button to stop syncing
                                     if (!isServiceToRun) {
                                         Log.i("WEBDAVinfo", "Stopping service after the user's command");
                                         break;
@@ -176,6 +169,7 @@ public class FileUploadService extends Service {
                                                 sardine.put(driveURL + "/" + folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
                                                 Log.i("WEBDAVupload", file.getName() + " - has been uploaded.");
 
+                                                //Uploaded a file? Counter++
                                                 howManyNewFilesWereUploadedNow.getAndIncrement();
                                                 howManyFilesWereAlreadyUploadedRecFromFUS++;
                                             } else {
@@ -207,6 +201,8 @@ public class FileUploadService extends Service {
                             blockedFilesRelatedQueue.add("literally no files to upload");
                             notifierService.onNotify(getApplicationContext());
                         }
+
+                        //Saving the amount of the uploaded files
                         SharedPreferences totalPathsCounter = getApplicationContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
                         int howManyFilesWereEverUploaded = totalPathsCounter.getInt("totalFilesDownloaded", 0);
                         totalPathsCounter.edit().putInt("totalFilesDownloaded", howManyFilesWereEverUploaded + howManyNewFilesWereUploadedNow.get()).apply();
@@ -222,6 +218,8 @@ public class FileUploadService extends Service {
                         blockedFilesRelatedQueue.add("no on-device directories were chosen to work with");
                         notifierService.onNotify(getApplicationContext());
                     }
+
+                    //Saving the date and the time after finishing the upload
                     Calendar now = Calendar.getInstance();
                     String theTimeTheUploadSucceeded = String.format("%02d.%02d.%02d, %02d:%02d",
                             now.get(Calendar.DATE), now.get(Calendar.MONTH) + 1, now.get(Calendar.YEAR),
@@ -236,11 +234,14 @@ public class FileUploadService extends Service {
                 }
                 Log.i("ServiceRuntimeInfo", "Stopped as task is completed");
 
+                //Changing SyncButton's title to "Sync"
                 syncTogglerButton[0] = false;
+                isServiceToRun = false;
 
             };
             new Thread(thread).start();
 
+            //The service stopping itself
             stopForeground(true);
             stopSelfResult(startId);
 
@@ -249,6 +250,7 @@ public class FileUploadService extends Service {
 
             syncTogglerButton[0] = false;
 
+            //The service stopping itself if really asked to do that immediately
             stopForeground(true);
             stopSelf();
         }

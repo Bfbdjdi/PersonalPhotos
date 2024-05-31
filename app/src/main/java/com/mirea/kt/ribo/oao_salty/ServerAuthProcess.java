@@ -74,6 +74,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
     @Override
     public void run() {
 
+        //POSTing
         String serverAddress = "https://android-for-students.ru/coursework/login.php";
 
         HashMap<String, String> userCredentialsMap = new HashMap<>();
@@ -94,7 +95,10 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
             osw.flush();
             int responseCode = httpConnection.getResponseCode();
 
+            //If auth-ed
             if (responseCode != -1) {
+
+                //Storing the server's response
                 InputStreamReader isr = new InputStreamReader(httpConnection.getInputStream());
                 BufferedReader br = new BufferedReader(isr);
                 String currentLine;
@@ -105,23 +109,26 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
                 responseBody = sbResponse.toString();
                 Log.d("AuthProcess", responseBody);
 
+                //Doing something depending on resultCode, that has been received from the server
                 JSONObject jSONObject = new JSONObject(responseBody);
                 int result = jSONObject.getInt("result_code");
 
                 switch (result) {
+                    //Auth-ed
                     case 1:
                         if (blockedQueue.isEmpty()) {
                             blockedQueue.add("allowed");
                         }
                         autoSaveLoginUsingSharedPrefs(userLogin, userPassword, contexter);
                         break;
+                    //Not auth-ed
                     case -1:
                         if (blockedQueue.isEmpty()) {
                             blockedQueue.add("not allowed");
                         }
                         break;
                     default:
-                        //log.d
+                        Log.e("AuthServerReturnedSomethingStrange", "Auth server has returned an unknown auth-code");
                         break;
                 }
             }
@@ -138,6 +145,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
 
     private SharedPreferences userCredentials;
 
+    //The method that saves a login and a password to auto-fill them after every app's launch
     private void autoSaveLoginUsingSharedPrefs(String userLogin, String userPassword, Context context) {
         userCredentials = contexter.getSharedPreferences("UserData", MODE_PRIVATE);
         SharedPreferences prefReader = userCredentials;

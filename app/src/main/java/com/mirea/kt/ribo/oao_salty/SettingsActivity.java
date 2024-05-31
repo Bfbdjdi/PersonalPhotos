@@ -37,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.settingsToolbar);
 
+        //The Back button in the ToolBar
         toolbar.setNavigationOnClickListener(v -> {
             finish();
         });
@@ -48,6 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
         }
 
+        //Checks user's inputs and nulls them if the latter are wrong
         private static ArrayList<String> userInputChecker(Context context) {
             Pattern pattern = null;
 
@@ -64,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             ArrayList<String> wrongInputList = new ArrayList<>();
 
+            //Checking every input string
             for (Map.Entry<String, String> entry : variablesList.entrySet()) {
 
                 boolean isItFolderName = false;
@@ -87,11 +90,13 @@ public class SettingsActivity extends AppCompatActivity {
                 assert pattern != null;
                 Matcher matcher = pattern.matcher(entry.getValue());
 
+                //If a string has prohibited symbols
                 if (matcher.find()) {
                     PreferenceManager.getDefaultSharedPreferences(context).edit().remove(entry.getKey()).apply();
                     wrongInputList.add(entry.getKey());
                 } else {
 
+                    //Saving a string to the SharedPref
                     SharedPreferences prefReader = PreferenceManager.getDefaultSharedPreferences(context);
                     String userTrimmedData;
                     if (!isItFolderName) {
@@ -123,18 +128,20 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            Preference button = findPreference("deletePreferences");
+            Preference buttonDeletePreferences = findPreference("deletePreferences");
 
             AtomicBoolean canListenerBeTriggered = new AtomicBoolean(true);
 
-            if (button != null) {
-                button.setOnPreferenceClickListener(preference -> {
+            //If the delete-everything button was pressed
+            if (buttonDeletePreferences != null) {
+                buttonDeletePreferences.setOnPreferenceClickListener(preference -> {
                     canListenerBeTriggered.set(false);
                     PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().clear().apply();
                     requireContext().getSharedPreferences("UserData", MODE_PRIVATE).edit().clear().apply();
                     requireContext().getSharedPreferences("PathsData", MODE_PRIVATE).edit().clear().apply();
                     requireContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE).edit().clear().apply();
 
+                    //Launching auth-activity
                     Intent resetToLoginScreen = new Intent(requireContext(), MainActivity.class);
                     resetToLoginScreen.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(resetToLoginScreen);
@@ -143,6 +150,7 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
 
+            //Every time the SharedPref is altered, we check every string
             listener = (prefs, key) -> {
                 if (canListenerBeTriggered.get()) {
                     ArrayList<String> wrongInputList = userInputChecker(requireContext());

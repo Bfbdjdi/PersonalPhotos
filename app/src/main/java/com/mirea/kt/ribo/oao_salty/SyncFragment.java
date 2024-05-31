@@ -28,6 +28,7 @@ public class SyncFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    //This runnable updates SyncFragment's TextViews every time there is need to do that
     private Handler mHandler = new Handler();
     private Runnable syncCheckerTask = new Runnable() {
         @Override
@@ -43,6 +44,7 @@ public class SyncFragment extends Fragment {
             totalFilesSavedTV.setText(totalPathsCounter.toString());
             previousSyncMomentTV.setText(theTimeTheUploadSucceeded);
 
+            //Switching the Sync's button title
             if ((isServiceToRun != null) && (isServiceToRun)){
                 togglerSyncButtonTV.setText(R.string.stopSync);
                 syncTogglerButton[0] = true;
@@ -88,6 +90,7 @@ public class SyncFragment extends Fragment {
         TextView driveURLTV = rootViewThisLocal.findViewById(R.id.driveURLTV);
         Button togglerSyncButtonTV = rootViewThisLocal.findViewById(R.id.togglerSyncButton);
 
+        //Setting the Sync's button text if an upload was started by a shortcut
         if (syncTogglerButton[0]) {
             togglerSyncButtonTV.setText(R.string.stopSync);
         } else {
@@ -98,12 +101,14 @@ public class SyncFragment extends Fragment {
         String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
         String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "last sync moment not avail");
 
+        //Displaying the path to the WEBDAV's upload folder
         if ((!driveURL.equals("driveURL not avail")) && (!theTimeTheUploadSucceeded.equals("last sync moment not avail"))) {
             driveURLTV.setText(String.format("%s/%s", driveURL, folderNameUploadIn));
         }
 
         WEBDAVSync WEBDAVUtil = new WEBDAVSync(requireContext());
 
+        //The Sync button was pressed? Switching its title
         togglerSyncButtonTV.setOnClickListener(item ->
         {
             String serviceControllerCommand;
@@ -117,6 +122,7 @@ public class SyncFragment extends Fragment {
                 togglerSyncButtonTV.setText(R.string.performSync);
             }
 
+            //Starting uploading files to the WEBDAV server
             WEBDAVUtil.fileUploader(serviceControllerCommand);
         });
     }
