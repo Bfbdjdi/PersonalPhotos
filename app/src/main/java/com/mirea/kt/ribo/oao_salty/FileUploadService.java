@@ -151,7 +151,7 @@ public class FileUploadService extends Service {
                                 Uri uri = Uri.parse(folderEntity);
                                 DocumentFile directoryTreeOfFiles = DocumentFile.fromTreeUri(this, uri);
 
-                                //Uploading files (sometimes) one by one
+                                //Uploading files (the majority of them at least) one by one
                                 for (DocumentFile file : directoryTreeOfFiles.listFiles()) {
 
                                     //If the user has pressed the button to stop syncing
@@ -169,6 +169,7 @@ public class FileUploadService extends Service {
                                                 sardine.put(driveURL + "/" + folderNameUploadIn + "/" + file.getName(), IOUtils.toByteArray(fis));
                                                 Log.i("WEBDAVupload", file.getName() + " - has been uploaded.");
 
+                                                fis.close();
                                                 //Uploaded a file? Counter++
                                                 howManyNewFilesWereUploadedNow.getAndIncrement();
                                                 howManyFilesWereAlreadyUploadedRecFromFUS++;
@@ -196,9 +197,9 @@ public class FileUploadService extends Service {
                         }
                         else
                         {
-                            Log.i("WEBDAVupload", "literally no files to upload");
+                            Log.i("WEBDAVupload", "no on-device directories were chosen to work with");
 
-                            blockedFilesRelatedQueue.add("literally no files to upload");
+                            blockedFilesRelatedQueue.add("no on-device directories were chosen to work with");
                             notifierService.onNotify(getApplicationContext());
                         }
 

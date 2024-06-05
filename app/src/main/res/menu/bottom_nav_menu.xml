@@ -12,9 +12,5 @@
         android:title="@string/sync_fragment_title"
         />
 
-<!--    <item-->
-<!--        android:id = "@+id/navigation_settings"-->
-<!--        android:icon="@drawable/ic_action_settings"-->
-<!--        android:title="@string/settings_fragment_title"-->
-<!--        />-->
 </menu>
+

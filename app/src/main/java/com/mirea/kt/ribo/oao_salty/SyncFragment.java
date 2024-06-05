@@ -21,8 +21,6 @@ public class SyncFragment extends Fragment {
         // Required empty public constructor
     }
 
-    TextView mSyncStateChecker;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +35,7 @@ public class SyncFragment extends Fragment {
             TextView previousSyncMomentTV = rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
             TextView totalFilesSavedTV = rootViewThisLocal.findViewById(R.id.totalFilesSavedTV);
 
-            String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "(пока синхронизаций не было)");
+            String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", getString(R.string.neverSyncedFillerText));
             SharedPreferences totalPathsCounterSP = requireContext().getSharedPreferences("TempPathsCounterData", MODE_PRIVATE);
             Integer totalPathsCounter = totalPathsCounterSP.getInt("totalFilesDownloaded", -0);
 
@@ -65,15 +63,14 @@ public class SyncFragment extends Fragment {
         // Inflate the layout for this fragment
         rootViewThisLocal = inflater.inflate(R.layout.fragment_sync, container, false);
 
-        mSyncStateChecker = rootViewThisLocal.findViewById(R.id.previousSyncMomentTV);
-        updateTextViews();
+        syncFragmentBase();
         return rootViewThisLocal;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateTextViews();
+        syncFragmentBase();
         mHandler.post(syncCheckerTask);
     }
 
@@ -85,7 +82,7 @@ public class SyncFragment extends Fragment {
 
     final static Boolean[] syncTogglerButton = {false};
 
-    void updateTextViews() {
+    void syncFragmentBase() {
 
         TextView driveURLTV = rootViewThisLocal.findViewById(R.id.driveURLTV);
         Button togglerSyncButtonTV = rootViewThisLocal.findViewById(R.id.togglerSyncButton);
@@ -98,8 +95,10 @@ public class SyncFragment extends Fragment {
         }
 
         String driveURL = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("driveURL", "driveURL not avail");
-        String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn", "folderNameUploadIn not avail");
-        String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment", "last sync moment not avail");
+        String folderNameUploadIn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("folderNameUploadIn",
+                "folderNameUploadIn not avail");
+        String theTimeTheUploadSucceeded = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("theLastSuccessfullSyncMoment",
+                "last sync moment not avail");
 
         //Displaying the path to the WEBDAV's upload folder
         if ((!driveURL.equals("driveURL not avail")) && (!theTimeTheUploadSucceeded.equals("last sync moment not avail"))) {

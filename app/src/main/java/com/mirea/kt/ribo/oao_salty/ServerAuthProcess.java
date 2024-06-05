@@ -95,7 +95,7 @@ public class ServerAuthProcess extends MainActivity implements Runnable {
             osw.flush();
             int responseCode = httpConnection.getResponseCode();
 
-            //If auth-ed
+            //If the server successfully processed the POST
             if (responseCode != -1) {
 
                 //Storing the server's response

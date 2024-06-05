@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.mirea.kt.ribo.oao_salty"
-        minSdk 26
+        minSdk 25
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -63,18 +63,6 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
     implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
     implementation 'com.github.thegrizzlylabs:sardine-android:0.9'
-
-    implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
-    implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
-
-    //implementation 'com.github.muddassir235:connection_checker:1.7'
-//    implementation 'com.cedarsoftware:json-io:4.24.0'
-//    implementation libs.json.lib.core
-    //implementation libs.json.lib.core.v303
-    //implementation("net.elytrium:serializer:1.1.1")
-    //implementation libs.dav4jvm
-//    implementation 'com.github.thegrizzlylabs:sardine-android:<0.9>'
-
 }
 
 

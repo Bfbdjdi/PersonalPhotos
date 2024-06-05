@@ -79,7 +79,8 @@ public class FilePathsAdapter extends RecyclerView.Adapter<FilePathsAdapter.View
                 //if the iterator is not the path to be deleted, we save the iter in another Set and in SharedPrefs.
                 //The path that is to be deleted from the list will not be added to the second Set and,
                 //consequently, saved
-                if (!URLDecoder.decode(entry, "UTF-8").contains(pathsContainer.get(position).getShortPath())) {
+
+               if (!URLDecoder.decode(entry, "UTF-8").contains(pathsContainer.get(position).getShortPath())) {
                     allSavedPathsDatasPathsModified.add(entry);
                 }
             } catch (UnsupportedEncodingException e) {
